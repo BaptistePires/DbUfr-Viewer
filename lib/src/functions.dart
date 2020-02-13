@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'exceptions/Exceptions.dart';
@@ -12,13 +14,11 @@ import 'package:intl/intl.dart';
 const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
 const String DB_UFR_URL = 'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
+const String FILE_NAME = 'grades.json';
 
 // Shared preferences functions
 Future<bool> isLogged() async {
   SharedPreferences sp = await SharedPreferences.getInstance();
-  sp.getKeys().forEach((key) {
-    print(sp.get(key));
-  });
   if (sp.getString(STUDENT_NO_KEY) == null ||
       sp.getString(PASSWORD_KEY) == null)
     return false;
@@ -54,10 +54,10 @@ Future<http.Response> queryToDbUfr(String studentNo, String password )async {
 
 }
 
-Future<String> getHtmlFromDbUfr(Map<String, String> creditentials) async {
+Future<String> getHtmlFromDbUfr(Map<String, String> credentials) async {
   String basicAuth = 'Basic ' +
       base64Encode(utf8.encode(
-          '${creditentials[STUDENT_NO_KEY]}:${creditentials[PASSWORD_KEY]}'));
+          '${credentials[STUDENT_NO_KEY]}:${credentials[PASSWORD_KEY]}'));
   http.Response response =
       await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
   int code = response.statusCode;
@@ -140,7 +140,6 @@ List<TeachingUnit> parseTUObjects(ues) {
       desc = info[3].text;
     }
 
-    print(desc);
     if (group.length > 0 &&
         name.length > 0 &&
         year.length > 0 &&
@@ -151,6 +150,22 @@ List<TeachingUnit> parseTUObjects(ues) {
     }
   });
   return uesObjects;
+}
+
+// Models related functions
+
+List<TeachingUnit> sortTeachingUnits(List<TeachingUnit> teachingUnits) {
+  teachingUnits.sort((a, b) {
+    if(a.grades == null) print(a.name);
+    int aL = a.grades.length;
+    int bL = b.grades.length;
+
+    if (aL == 0 && bL == 0) return -1;
+    if (aL == 0) return 1;
+    if(bL == 0) return 0;
+    return compareTwoTuTimes(b, a);
+  });
+  return teachingUnits;
 }
 
 // Strings related function
@@ -169,7 +184,6 @@ String truncMonthToFull(String truncatedMonth) {
     'Novembre',
     'Decembre'
   ];
-  print(truncatedMonth);
 
   try {
     String m = months.firstWhere((m) {
@@ -227,5 +241,36 @@ String monthToNo(String month) {
       return '12';
     }
     return '01';
+}
 
+// Files related functions
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+  return directory.path;
+}
+Future<File> get _gradesFiles async {
+  final path = await _localPath;
+  return File('$path/grades.json');
+}
+
+Future<File> saveToFile(List<TeachingUnit> teachingUnits) async {
+  final file = await _gradesFiles;
+  String jsonTeachingUnits = json.encode(teachingUnits);
+  print('eczerc: ' + jsonTeachingUnits);
+  return file.writeAsString(jsonTeachingUnits);
+}
+
+Future<List<TeachingUnit>> loadGrades() async {
+  final file = await _gradesFiles;
+  String content = await file.readAsString();
+  if(content.length == 0) return null;
+  print('content : ${content}');
+  dynamic json = jsonDecode(content);
+  print('json decoded : $json');
+  List<TeachingUnit> teachingUnits = new List<TeachingUnit>();
+  json.forEach((o) {
+    teachingUnits.add(TeachingUnit.fromJson(o));
+  });
+//  teachingUnits.forEach((o) => print(o.grades));
+  return teachingUnits;
 }

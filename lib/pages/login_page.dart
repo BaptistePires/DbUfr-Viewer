@@ -127,7 +127,6 @@ class _LoginPageState extends State<LoginPage> {
       http.Response response = await queryToDbUfr(studentNo, password);
       setState(() {
         resetFlags();
-        print('${response.statusCode}');
         if (response.statusCode != 200) {
           if (response.statusCode == 401) {
             _credentialsError = true;
@@ -141,10 +140,8 @@ class _LoginPageState extends State<LoginPage> {
 
       });
       if(_credentialsError || _connectError){
-        print('$_credentialsError : $_connectError');
         return;
       }
-      print(response.body);
         // Do we save user credentials
         if (_doRememberMe) {
           saveCredentials(studentNo, password);
