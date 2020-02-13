@@ -158,6 +158,9 @@ class _LoginPageState extends State<LoginPage> {
         resetFlags();
         _connectError = true;
       });
+      Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+        'Impossible de joindre DbUfr.'
+      ));
     }
   }
 
@@ -225,18 +228,7 @@ class _LoginPageState extends State<LoginPage> {
               _setUpRememberMe(),
             ],
           ),
-          SizedBox(
-            height: 20,
-          ),
           _setUpLoginBtn(),
-          Text(
-            _credentialsError ?'Numéro étudiant ou mot de passe incorect' :
-            'Erreur lors de la requête à DbUfr.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: _connectError || _credentialsError? Colors.red : Colors.white,
-            ),
-          )
         ],
       ),
     );
@@ -255,6 +247,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       controller: studentNoController,
+
       enabled: _connecting ? false : true,
       validator: (value) {
         if (value.isEmpty) return 'Indiquez votre numéro d\'étudiant';
@@ -332,7 +325,11 @@ class _LoginPageState extends State<LoginPage> {
             widthFactor: 1,
           ),
         )
-            : Text('Se connecter'),
+            : Text('Se connecter',
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 17
+        ),),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         borderSide: BorderSide(color: Colors.blue),
       ),

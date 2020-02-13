@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:html/dom.dart';
+import 'package:html/dom.dart' show Document;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -310,4 +310,32 @@ LinearGradient getLinearGradientBg() {
         Colors.lightBlue[700],
         Colors.lightBlue[800],
       ]);
+}
+
+SnackBar setUpConnectDbUfrSnack(String text) {
+  return SnackBar(
+    duration: Duration(seconds: 2),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        side: BorderSide(
+            color: Colors.lightBlue[300],
+            width: 2
+        )
+    ),
+    content: Container(
+      padding: EdgeInsets.all(10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Icon(Icons.error),
+          SizedBox(
+            width: 15,
+          ),
+          Text(text)
+        ],
+      ),
+    ),
+  );
 }

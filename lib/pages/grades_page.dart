@@ -390,32 +390,9 @@ class _GradesPageState extends State<GradesPage> {
       } catch (e) {
         setState(() {
           _refreshing = false;
-          if(ues.length > 0){
-            Scaffold.of(context).showSnackBar(SnackBar(
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                side: BorderSide(
-                    color: Colors.lightBlue[300],
-                    width: 2
-                )
-              ),
-              content: Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(Icons.error),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Text('Impossible de mettre à jour les données.')
-                  ],
-                ),
-              ),
-            ));
+          if(ues.length > 0){      Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+              'Impossible de mettre à jour les données.'
+          ));
           }
         });
       }
@@ -477,31 +454,8 @@ class _GradesPageState extends State<GradesPage> {
   }
 
   void _showSnackBarSuccessRefresh(){
-    Scaffold.of(context).showSnackBar(
-        SnackBar(
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              side: BorderSide(
-                  color: Colors.lightBlue[300],
-                  width: 2
-              )
-          ),
-          content: Container(
-            padding: EdgeInsets.all(10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.error),
-                SizedBox(
-                  width: 15,
-                ),
-                Text('Données mises à jour avec succès.')
-              ],
-            ),
-          ),
-        ));
+    Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+        'Données mises à jour avec succès.'
+    ));
   }
 }
