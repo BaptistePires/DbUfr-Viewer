@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dbufr_checker/src/models/Grade.dart';
-import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'exceptions/Exceptions.dart';
 import 'models/TeachingUnit.dart';
-import 'package:html/parser.dart' show parse;
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
@@ -26,7 +25,7 @@ Future<bool> isLogged() async {
     return true;
 }
 
-void saveCredentials(String studentNo, String password) async {
+Future<void> saveCredentials(String studentNo, String password) async {
   SharedPreferences sp = await SharedPreferences.getInstance();
   sp.setString(STUDENT_NO_KEY, studentNo);
   sp.setString(PASSWORD_KEY, password);

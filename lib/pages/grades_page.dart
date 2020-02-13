@@ -1,13 +1,15 @@
 import 'dart:io';
-
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:dbufr_checker/src/models/TeachingUnit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
 import 'package:html/parser.dart' show parse;
 import '../src/functions.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GradesPage extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class _GradesPageState extends State<GradesPage> {
   List<TeachingUnit> ues = new List<TeachingUnit>();
   bool _isInitialized = false;
   bool _cantConnect = false;
+  bool _refreshing = false;
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
@@ -30,8 +33,8 @@ class _GradesPageState extends State<GradesPage> {
         onWillPop: _onWillPop,
         child: Scaffold(
           appBar: _setUpAppBar(),
-          body: _isInitialized
-              ? !_cantConnect ? Container(
+          body:
+              !_cantConnect ? Container(
                   padding: EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -44,12 +47,16 @@ class _GradesPageState extends State<GradesPage> {
                         Colors.lightBlue[700],
                         Colors.lightBlue[800],
                       ])),
-                  child: _buildListView(context),
-                ) : Text('Can\'t connect to DbUfr or read saved data, try again lateror disconnect.')
-              : Center(
-                  child: CircularProgressIndicator(),
-                ),
-        ));
+                  child: _isInitialized ? _buildListView(context) : Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[800]),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                ) : Text('Can\'t connect to DbUfr or read saved data, try again lateror disconnect.'),
+          floatingActionButton: _setUpFloatingActionBtn(),
+        ),
+    );
   }
 
   Route _createRoute() {
@@ -173,6 +180,7 @@ class _GradesPageState extends State<GradesPage> {
       ues = pareTUFromHTML(document);
       saveToFile(ues);
       _isInitialized = true;
+      _refreshing = false;
     });
   }
 
@@ -280,5 +288,40 @@ class _GradesPageState extends State<GradesPage> {
     });
 
     return listTiles;
+  }
+
+  Widget _setUpFloatingActionBtn() {
+    return !_refreshing ? SpeedDial(
+      animationSpeed: 10,
+//      child: ,
+      animatedIcon: AnimatedIcons.menu_close,
+      children: [
+        SpeedDialChild(
+          child: Icon(Icons.refresh),
+          label: 'Rafraichir',
+          onTap: () {
+            setState(() {
+              _refreshing = true;
+            });
+            refresh();
+          }
+        ),
+      ],
+    ) : FloatingActionButton(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      ),
+      onPressed: () {},
+    );
+  }
+
+  void refresh() async {
+
+    getCredentials().then((credentials) {
+      getHtmlFromDbUfr(credentials).then((html) {
+        parseHTML(html);
+
+      });
+    });
   }
 }
