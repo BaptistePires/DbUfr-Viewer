@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                   height: 30,
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
+                  padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(color: Colors.black, width: 1),
@@ -305,6 +305,7 @@ class _LoginPageState extends State<LoginPage> {
             ? null
             : () {
           login();
+
         },
         child: _connecting
             ? _connected

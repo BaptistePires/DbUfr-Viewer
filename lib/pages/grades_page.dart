@@ -206,21 +206,31 @@ class _GradesPageState extends State<GradesPage> {
             child: ues[i].grades.length > 0
                 ? Theme(
                     data: theme,
+                    // START TILE
                     child: ExpansionTile(
+
+                      // TITLE
                       title: Text(
                         '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
                             truncMonthToFull(ues[i].month),
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.blue,
                         ),
                       ),
+
+                      // SUBTITLE
                       subtitle: Container(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
                           '${ues[i].desc}',
-                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+//                            color: Colors.blue,
+                              ),
                         ),
                       ),
+
+                      // TILE CONTENT
                       children: _setUpGradesListForTU(i),
                       onExpansionChanged: (change) {
                         bool hasChanged = false;
@@ -321,17 +331,16 @@ class _GradesPageState extends State<GradesPage> {
                     refresh();
                   }),
               SpeedDialChild(
-                child: Icon(Icons.power_settings_new),
-                label: 'Deconnexion',
-                onTap:() async {
+                  child: Icon(Icons.power_settings_new),
+                  label: 'Deconnexion',
+                  onTap: () async {
                     bool doDisconnectUser = await doDisconnect();
                     if (doDisconnectUser) {
                       await clearUserData();
                       Navigator.of(context).pushAndRemoveUntil(
                           _createRoute(), (Route<dynamic> route) => false);
-                  }
-                }
-              )
+                    }
+                  })
             ],
           )
         : FloatingActionButton(
@@ -390,9 +399,9 @@ class _GradesPageState extends State<GradesPage> {
       } catch (e) {
         setState(() {
           _refreshing = false;
-          if(ues.length > 0){      Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-              'Impossible de mettre à jour les données.'
-          ));
+          if (ues.length > 0) {
+            Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+                'Impossible de mettre à jour les données.'));
           }
         });
       }
@@ -453,9 +462,13 @@ class _GradesPageState extends State<GradesPage> {
     );
   }
 
-  void _showSnackBarSuccessRefresh(){
-    Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-        'Données mises à jour avec succès.'
-    ));
+  void _showSnackBarSuccessRefresh() {
+    Scaffold.of(context).showSnackBar(
+        setUpConnectDbUfrSnack('Données mises à jour avec succès.'));
+  }
+
+
+  void testColorAnim() {
+
   }
 }

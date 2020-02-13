@@ -14,7 +14,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
-const String DB_UFR_URL = 'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
+const String DB_UFR_URL =
+    'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
 const String FILE_NAME = 'grades.json';
 
 Future<void> clearUserData() async {
@@ -52,21 +53,19 @@ Future<void> clearSharedPreferences() async {
 }
 
 // Http functions
-Future<http.Response> queryToDbUfr(String studentNo, String password )async {
-  String basicAuth = 'Basic ' +
-      base64Encode(utf8.encode(
-          '$studentNo:$password'));
+Future<http.Response> queryToDbUfr(String studentNo, String password) async {
+  String basicAuth =
+      'Basic ' + base64Encode(utf8.encode('$studentNo:$password'));
   return await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
-
 }
 
 Future<String> getHtmlFromDbUfr(Map<String, String> credentials) async {
   String basicAuth = 'Basic ' +
       base64Encode(utf8.encode(
           '${credentials[STUDENT_NO_KEY]}:${credentials[PASSWORD_KEY]}'));
-  try{
+  try {
     http.Response response =
-    await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
+        await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
     int code = response.statusCode;
     if (code != 200) {
       if (code == 404) {
@@ -77,7 +76,7 @@ Future<String> getHtmlFromDbUfr(Map<String, String> credentials) async {
     } else {
       return response.body;
     }
-  }catch (Exception){
+  } catch (Exception) {
     return null;
   }
   return null;
@@ -98,7 +97,6 @@ List<TeachingUnit> pareTUFromHTML(Document document) {
     double grade, max;
     String desc;
     if (child.children[0].text != 'UE') {
-
       // info => index:
       // 0 - Teaching unit name LUXXXXXX
       // 1 - Description fo the grade
@@ -115,15 +113,16 @@ List<TeachingUnit> pareTUFromHTML(Document document) {
         String max = grade.split('/')[1];
         grade = grade.split('/')[0];
         uesObjects[i].grades.add(new Grade(
-            double.parse(grade), double.parse(max), desc, newGrade: true));
+            double.parse(grade), double.parse(max), desc,
+            newGrade: true));
       }
     }
   });
   uesObjects.sort((a, b) {
-   DateFormat format = DateFormat('yyyy-MM-dd');
-   DateTime aTime = format.parse('${a.year}-'+monthToNo(a.month)+'-01');
-   DateTime bTime = format.parse('${b.year}-'+monthToNo(b.month)+'-01');
-   return bTime.compareTo(aTime);
+    DateFormat format = DateFormat('yyyy-MM-dd');
+    DateTime aTime = format.parse('${a.year}-' + monthToNo(a.month) + '-01');
+    DateTime bTime = format.parse('${b.year}-' + monthToNo(b.month) + '-01');
+    return bTime.compareTo(aTime);
   });
 
   return uesObjects;
@@ -147,9 +146,9 @@ List<TeachingUnit> parseTUObjects(ues) {
       }
     });
     String desc;
-    try{
+    try {
       desc = utf8.decode(Latin1Codec().encode(info[3].text));
-    }catch(Exception){
+    } catch (Exception) {
       desc = info[3].text;
     }
 
@@ -173,7 +172,7 @@ List<TeachingUnit> sortTeachingUnits(List<TeachingUnit> teachingUnits) {
 
     if (aL == 0 && bL == 0) return -1;
     if (aL == 0) return 1;
-    if(bL == 0) return 0;
+    if (bL == 0) return 0;
     return compareTwoTuTimes(b, a);
   });
   return teachingUnits;
@@ -216,50 +215,50 @@ String truncMonthToFull(String truncatedMonth) {
 
 int compareTwoTuTimes(TeachingUnit a, TeachingUnit b) {
   DateFormat format = DateFormat('yyyy-MM-dd');
-  DateTime aTime = format.parse('${a.year}-'+monthToNo(a.month)+'-01');
-  DateTime bTime = format.parse('${b.year}-'+monthToNo(b.month)+'-01');
+  DateTime aTime = format.parse('${a.year}-' + monthToNo(a.month) + '-01');
+  DateTime bTime = format.parse('${b.year}-' + monthToNo(b.month) + '-01');
   return aTime.compareTo(bTime);
 }
 
 String monthToNo(String month) {
-    month = month.toLowerCase();
-    if(month == 'janvier') {
-      return '01';
-    }
-    if(month == 'fevrier') {
-      return '02';
-    }
-    if(month == 'mars') {
-      return '03';
-    }
-    if(month == 'avril') {
-      return '04';
-    }
-    if(month == 'mai') {
-      return '05';
-    }
-    if(month == 'juin') {
-      return '06';
-    }
-    if(month == 'juillet') {
-      return '07';
-    }
-    if(month == 'aout') {
-      return '08';
-    }
-    if(month == 'septembre') {
-      return '09';
-    }
-    if(month == 'octobre') {
-      return '10';
-    }
-    if(month == 'novembre') {
-      return '11';
-    }
-    if(month == 'decembre') {
-      return '12';
-    }
+  month = month.toLowerCase();
+  if (month == 'janvier') {
     return '01';
+  }
+  if (month == 'fevrier') {
+    return '02';
+  }
+  if (month == 'mars') {
+    return '03';
+  }
+  if (month == 'avril') {
+    return '04';
+  }
+  if (month == 'mai') {
+    return '05';
+  }
+  if (month == 'juin') {
+    return '06';
+  }
+  if (month == 'juillet') {
+    return '07';
+  }
+  if (month == 'aout') {
+    return '08';
+  }
+  if (month == 'septembre') {
+    return '09';
+  }
+  if (month == 'octobre') {
+    return '10';
+  }
+  if (month == 'novembre') {
+    return '11';
+  }
+  if (month == 'decembre') {
+    return '12';
+  }
+  return '01';
 }
 
 // Files related functions
@@ -267,6 +266,7 @@ Future<String> get _localPath async {
   final directory = await getApplicationDocumentsDirectory();
   return directory.path;
 }
+
 Future<File> get _gradesFiles async {
   final path = await _localPath;
   return File('$path/grades.json');
@@ -280,9 +280,9 @@ Future<File> saveToFile(List<TeachingUnit> teachingUnits) async {
 
 Future<List<TeachingUnit>> loadGrades() async {
   final file = await _gradesFiles;
-  if(!file.existsSync()) return null;
+  if (!file.existsSync()) return null;
   String content = await file.readAsString();
-  if(content.length == 0) return null;
+  if (content.length == 0) return null;
   dynamic json = jsonDecode(content);
   List<TeachingUnit> teachingUnits = new List<TeachingUnit>();
   json.forEach((o) {
@@ -292,9 +292,9 @@ Future<List<TeachingUnit>> loadGrades() async {
   return teachingUnits;
 }
 
-Future<void> deleteGradesFile() async{
-    final file = await _gradesFiles;
-    await file.delete();
+Future<void> deleteGradesFile() async {
+  final file = await _gradesFiles;
+  await file.delete();
 }
 
 // WIDGETS CONSTRUCTOS
@@ -318,11 +318,7 @@ SnackBar setUpConnectDbUfrSnack(String text) {
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        side: BorderSide(
-            color: Colors.lightBlue[300],
-            width: 2
-        )
-    ),
+        side: BorderSide(color: Colors.lightBlue[300], width: 2)),
     content: Container(
       padding: EdgeInsets.all(10),
       child: Row(
@@ -338,4 +334,29 @@ SnackBar setUpConnectDbUfrSnack(String text) {
       ),
     ),
   );
+}
+
+// Animations functios
+Color colorVariation(int note) {
+  if (note <= 1) {
+    return Colors.blue[50];
+  } else if (note > 1 && note <= 2) {
+    return Colors.blue[100];
+  } else if (note > 2 && note <= 3) {
+    return Colors.blue[200];
+  } else if (note > 3 && note <= 4) {
+    return Colors.blue[300];
+  } else if (note > 4 && note <= 5) {
+    return Colors.blue[400];
+  } else if (note > 5 && note <= 6) {
+    return Colors.blue;
+  } else if (note > 6 && note <= 7) {
+    return Colors.blue[600];
+  } else if (note > 7 && note <= 8) {
+    return Colors.blue[700];
+  } else if (note > 8 && note <= 9) {
+    return Colors.blue[800];
+  } else if (note > 9 && note <= 10) {
+    return Colors.blue[900];
+  }
 }
