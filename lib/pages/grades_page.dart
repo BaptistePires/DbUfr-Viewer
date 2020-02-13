@@ -27,27 +27,30 @@ class _GradesPageState extends State<GradesPage> {
     if (!_isInitialized) {
       setup();
     }
-    if (ues.length >= 2){
+    if (ues.length >= 2) {
       ues = sortTeachingUnits(ues);
     }
     return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          appBar: _setUpAppBar(),
-          body:
-              !_cantConnect  ? Container(
-                  padding: EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                      gradient: getLinearGradientBg()),
-                  child: _isInitialized ? _buildListView(context) : Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[800]),
-                      strokeWidth: 3,
-                    ),
-                  ),
-                ) : _setUpCantConnect(),
-          floatingActionButton: _setUpFloatingActionBtn(),
-        ),
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: _setUpAppBar(),
+        body: !_cantConnect
+            ? Container(
+                padding: EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(gradient: getLinearGradientBg()),
+                child: _isInitialized
+                    ? _buildListView(context)
+                    : Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.blue[800]),
+                          strokeWidth: 3,
+                        ),
+                      ),
+              )
+            : _setUpCantConnect(),
+        floatingActionButton: _setUpFloatingActionBtn(),
+      ),
     );
   }
 
@@ -146,9 +149,9 @@ class _GradesPageState extends State<GradesPage> {
       parseHTML(args.htmlGrades);
     } else {
       // If he's, then we parse the saved data
-      try{
+      try {
         loadGrades().then((r) {
-          if(r==null) {
+          if (r == null) {
             _refreshing = true;
             refresh();
             return;
@@ -159,15 +162,13 @@ class _GradesPageState extends State<GradesPage> {
             _cantConnect = false;
           });
         });
-      }catch(e) {
+      } catch (e) {
         setState(() {
           _refreshing = true;
           refresh();
         });
       }
-
     }
-
   }
 
   void parseHTML(String html) async {
@@ -194,7 +195,11 @@ class _GradesPageState extends State<GradesPage> {
           elevation: 5,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
-            side: BorderSide(color: !hasUnviewedGrades(ues[i]) ? Colors.transparent : Colors.red, width: 2),
+            side: BorderSide(
+                color: !hasUnviewedGrades(ues[i])
+                    ? Colors.transparent
+                    : Colors.red,
+                width: 2),
           ),
           child: Container(
             padding: EdgeInsets.all(3),
@@ -203,28 +208,32 @@ class _GradesPageState extends State<GradesPage> {
                     data: theme,
                     child: ExpansionTile(
                       title: Text(
-                          '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
-                              truncMonthToFull(ues[i].month),
-                      style: TextStyle(
+                        '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
+                            truncMonthToFull(ues[i].month),
+                        style: TextStyle(
                           color: Colors.blue,
-                      ),),
+                        ),
+                      ),
                       subtitle: Container(
-                        padding: EdgeInsets.only(top:5),
-                          child: Text('${ues[i].desc}', overflow: TextOverflow.ellipsis,),
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                          '${ues[i].desc}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       children: _setUpGradesListForTU(i),
                       onExpansionChanged: (change) {
                         bool hasChanged = false;
                         setState(() {
                           ues[i].grades.forEach((g) {
-                            if(!g.viewed){
+                            if (!g.viewed) {
                               g.viewed = true;
                               hasChanged = true;
-                            };
+                            }
+                            ;
                           });
                         });
-                         if(hasChanged)saveToFile(ues);
-
+                        if (hasChanged) saveToFile(ues);
                       },
                     ))
                 : Container(
@@ -235,14 +244,14 @@ class _GradesPageState extends State<GradesPage> {
                         Text(
                           '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
                               truncMonthToFull(ues[i].month),
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.blue
-                          ),
+                          style: TextStyle(fontSize: 15, color: Colors.blue),
                         ),
                         Container(
-                          padding: EdgeInsets.only(top:5),
-                          child: Text('${ues[i].desc}', overflow: TextOverflow.ellipsis,),
+                          padding: EdgeInsets.only(top: 5),
+                          child: Text(
+                            '${ues[i].desc}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         )
                       ],
                     ),
@@ -273,7 +282,9 @@ class _GradesPageState extends State<GradesPage> {
               padding: EdgeInsets.only(left: 30, right: 30, bottom: 5),
               child: RichText(
                 text: TextSpan(
-                  style: TextStyle(fontSize: 13, color: g.newGrade  ? Colors.red : Colors.black),
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: g.newGrade ? Colors.red : Colors.black),
                   children: <TextSpan>[
                     TextSpan(
                         text: '${g.grade}/${g.max}',
@@ -282,7 +293,6 @@ class _GradesPageState extends State<GradesPage> {
                   ],
                 ),
               ),
-
             )),
             SizedBox(
               height: 30,
@@ -295,81 +305,121 @@ class _GradesPageState extends State<GradesPage> {
   }
 
   Widget _setUpFloatingActionBtn() {
-    return !_refreshing ? SpeedDial(
+    return !_refreshing
+        ? SpeedDial(
 //      child: Icon(Icons.add),
-      animatedIcon: AnimatedIcons.menu_close,
-      children: [
-        SpeedDialChild(
-          child: Icon(Icons.refresh),
-          label: 'Rafraichir',
-          onTap: () {
-            setState(() {
-              _refreshing = true;
-
-            });
-            refresh();
-          }
-        ),
-      ],
-    ) : FloatingActionButton(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-      ),
-      onPressed: () {},
-    );
+            animatedIcon: AnimatedIcons.menu_close,
+            animationSpeed: 250,
+            children: [
+              SpeedDialChild(
+                  child: Icon(Icons.refresh),
+                  label: 'Rafraichir',
+                  onTap: () {
+                    setState(() {
+                      _refreshing = true;
+                    });
+                    refresh();
+                  }),
+              SpeedDialChild(
+                child: Icon(Icons.power_settings_new),
+                label: 'Deconnexion',
+                onTap:() async {
+                    bool doDisconnectUser = await doDisconnect();
+                    if (doDisconnectUser) {
+                      await clearUserData();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          _createRoute(), (Route<dynamic> route) => false);
+                  }
+                }
+              )
+            ],
+          )
+        : FloatingActionButton(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            onPressed: () {},
+          );
   }
 
   void refresh() async {
     Map<String, String> credentials = await getCredentials();
 
-    if(credentials['student_no'] == null || credentials['password'] == null) {
+    if (credentials['student_no'] == null || credentials['password'] == null) {
       CredentialsArgument args = ModalRoute.of(context).settings.arguments;
-      credentials = {STUDENT_NO_KEY: args.studentNo, PASSWORD_KEY:args.password};
+      credentials = {
+        STUDENT_NO_KEY: args.studentNo,
+        PASSWORD_KEY: args.password
+      };
     }
 
-
-
-      getHtmlFromDbUfr(credentials).then((html) {
-        try{
-          List<TeachingUnit> newTeachingUnits = pareTUFromHTML(parse(html));
-          newTeachingUnits.forEach((newTeachingUnData) {
-            bool teachingUExists = false;
-            ues.forEach((currentTu) {
-              if(newTeachingUnData.name == currentTu.name) {
-                teachingUExists = true;
-                if(newTeachingUnData.grades.length != currentTu.grades.length) {
-                  newTeachingUnData.grades.forEach((gradeFromQuery) {
-                    bool present =false;
-                    currentTu.grades.forEach((current_grade) {
-                      if(gradeFromQuery ==  current_grade) {
-                        present = true;
-                      }
-                    });
-                    gradeFromQuery.newGrade = true;
-                    if(!present) currentTu.grades.add(gradeFromQuery);
+    getHtmlFromDbUfr(credentials).then((html) {
+      try {
+        List<TeachingUnit> newTeachingUnits = pareTUFromHTML(parse(html));
+        newTeachingUnits.forEach((newTeachingUnData) {
+          bool teachingUExists = false;
+          ues.forEach((currentTu) {
+            if (newTeachingUnData.name == currentTu.name) {
+              teachingUExists = true;
+              if (newTeachingUnData.grades.length != currentTu.grades.length) {
+                newTeachingUnData.grades.forEach((gradeFromQuery) {
+                  bool present = false;
+                  currentTu.grades.forEach((current_grade) {
+                    if (gradeFromQuery == current_grade) {
+                      present = true;
+                    }
                   });
-                }else{
-                  currentTu.grades.forEach((g) {
-                    g.newGrade = false;
-                  });
-                }
+                  gradeFromQuery.newGrade = true;
+                  if (!present) currentTu.grades.add(gradeFromQuery);
+                });
+              } else {
+                currentTu.grades.forEach((g) {
+                  g.newGrade = false;
+                });
               }
-            });
-            if(!teachingUExists) ues.add(newTeachingUnData);
+            }
           });
-          setState(() {
-            _refreshing = false;
-            _cantConnect = false;
-            _isInitialized = true;
-          });
-        }catch(e){
-            setState(() {
-              _refreshing = false;
-              _cantConnect = true;
-            });
-        }
-      });
-
+          if (!teachingUExists) ues.add(newTeachingUnData);
+        });
+        setState(() {
+          _refreshing = false;
+          _cantConnect = false;
+          _isInitialized = true;
+        });
+        _showSnackBarSuccessRefresh();
+      } catch (e) {
+        setState(() {
+          _refreshing = false;
+          if(ues.length > 0){
+            Scaffold.of(context).showSnackBar(SnackBar(
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                side: BorderSide(
+                    color: Colors.lightBlue[300],
+                    width: 2
+                )
+              ),
+              content: Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(Icons.error),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Text('Impossible de mettre à jour les données.')
+                  ],
+                ),
+              ),
+            ));
+          }
+        });
+      }
+    });
   }
 
   Widget _setUpCantConnect() {
@@ -392,18 +442,24 @@ class _GradesPageState extends State<GradesPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text('Erreur', style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),),
-                        SizedBox(height: 10,),
-                        Divider(),
-                        SizedBox(height: 10,),
                         Text(
-                            'Il y a eu une erreur lors de la connexion à Db ufr',
-                        style: TextStyle(
-                          fontSize: 17,
-                        ),),
+                          'Erreur',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Divider(),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Il y a eu une erreur lors de la connexion à Db ufr',
+                          style: TextStyle(
+                            fontSize: 17,
+                          ),
+                        ),
                         OutlineButton(
                           onPressed: () {
                             setState(() {
@@ -415,11 +471,37 @@ class _GradesPageState extends State<GradesPage> {
                       ],
                     )
                   ],
-                )
-            )
-        ),
+                ))),
       ),
     );
+  }
 
+  void _showSnackBarSuccessRefresh(){
+    Scaffold.of(context).showSnackBar(
+        SnackBar(
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              side: BorderSide(
+                  color: Colors.lightBlue[300],
+                  width: 2
+              )
+          ),
+          content: Container(
+            padding: EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.error),
+                SizedBox(
+                  width: 15,
+                ),
+                Text('Données mises à jour avec succès.')
+              ],
+            ),
+          ),
+        ));
   }
 }
