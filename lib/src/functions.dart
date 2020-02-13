@@ -49,7 +49,7 @@ void clearSharedPreferences() async {
 Future<http.Response> queryToDbUfr(String studentNo, String password )async {
   String basicAuth = 'Basic ' +
       base64Encode(utf8.encode(
-          '$studentNo:$password}'));
+          '$studentNo:$password'));
   return await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
 
 }

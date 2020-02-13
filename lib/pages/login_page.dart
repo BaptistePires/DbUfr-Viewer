@@ -122,39 +122,41 @@ class _LoginPageState extends State<LoginPage> {
     // Querying DbUfr to get user data
     String studentNo = studentNoController.text;
     String password = passwordController.text;
-//    String basicAuth =
-//        'Basic ' + base64Encode(utf8.encode('$studentNo:$password'));
-//    String url =
-//        'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
-//    http.Response response =
-//    await http.get(url, headers: {'authorization': basicAuth});
 
     try{
       http.Response response = await queryToDbUfr(studentNo, password);
       setState(() {
         resetFlags();
+        print('${response.statusCode}');
         if (response.statusCode != 200) {
           if (response.statusCode == 401) {
             _credentialsError = true;
           } else {
             _connectError = true;
           }
-          return;
-        }
-        _connecting = false;
-        _connected = true;
-      });
-      if(_credentialsError || _connected) return;
-      // Do we save user credentials
-      if (_doRememberMe) {
-        saveCredentials(studentNo, password);
-      }
 
-      // Go to next route and delete this one
-      CredentialsArgument args = new CredentialsArgument(
-          studentNo, password, htmlGrades: response.body);
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/grades', (Route<dynamic> route) => false, arguments: args);
+        }else{
+          _connected = true;
+        }
+
+      });
+      if(_credentialsError || _connectError){
+        print('$_credentialsError : $_connectError');
+        return;
+      }
+      print(response.body);
+        // Do we save user credentials
+        if (_doRememberMe) {
+          saveCredentials(studentNo, password);
+        }
+
+        // Go to next route and delete this one
+        CredentialsArgument args = new CredentialsArgument(
+            studentNo, password, htmlGrades: response.body);
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/grades', (Route<dynamic> route) => false, arguments: args);
+
+
     }catch(Exception) {
       setState(() {
         resetFlags();
