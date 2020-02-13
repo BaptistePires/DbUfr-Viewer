@@ -94,7 +94,6 @@ class _LoginPageState extends State<LoginPage> {
     _firstOpening = false;
     // Check in SharedPreferences
     bool logged = await isLogged();
-    print(logged);
     if (logged) {
       Map<String, String> credentials = await getCredentials();
 
@@ -142,11 +141,9 @@ class _LoginPageState extends State<LoginPage> {
       if(_credentialsError || _connectError){
         return;
       }
-        print('doremem : $_doRememberMe');
         // Do we save user credentials
         if (_doRememberMe) {
           await saveCredentials(studentNo, password);
-          print('saved');
         }
 
         // Go to next route and delete this one
@@ -299,7 +296,9 @@ class _LoginPageState extends State<LoginPage> {
     return Checkbox(
       value: _doRememberMe,
       onChanged: (state) {
-        _doRememberMe = state;
+        setState(() {
+          _doRememberMe = state;
+        });
       },
     );
   }

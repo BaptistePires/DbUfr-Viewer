@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dbufr_checker/src/models/Grade.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:html/dom.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +16,11 @@ const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
 const String DB_UFR_URL = 'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
 const String FILE_NAME = 'grades.json';
+
+Future<void> clearUserData() async {
+  await clearSharedPreferences();
+  await deleteGradesFile();
+}
 
 // Shared preferences functions
 Future<bool> isLogged() async {
@@ -39,7 +46,7 @@ Future<Map<String, String>> getCredentials() async {
   };
 }
 
-void clearSharedPreferences() async {
+Future<void> clearSharedPreferences() async {
   SharedPreferences sp = await SharedPreferences.getInstance();
   sp.clear();
 }
@@ -57,21 +64,26 @@ Future<String> getHtmlFromDbUfr(Map<String, String> credentials) async {
   String basicAuth = 'Basic ' +
       base64Encode(utf8.encode(
           '${credentials[STUDENT_NO_KEY]}:${credentials[PASSWORD_KEY]}'));
-  http.Response response =
-      await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
-  int code = response.statusCode;
-  if (code != 200) {
-    if (code == 404) {
-      throw new CantReachDbUfrError('Impossible de se connecter à DBUFR.');
-    } else if (code == 401) {
-      throw new CredentialsError('Mauvais identifiant et/ou mot de passe.');
+  try{
+    http.Response response =
+    await http.get(DB_UFR_URL, headers: {'authorization': basicAuth});
+    int code = response.statusCode;
+    if (code != 200) {
+      if (code == 404) {
+        throw new CantReachDbUfrError('Impossible de se connecter à DBUFR.');
+      } else if (code == 401) {
+        throw new CredentialsError('Mauvais identifiant et/ou mot de passe.');
+      }
+    } else {
+      return response.body;
     }
-  } else {
-    return response.body;
+  }catch (Exception){
+    return null;
   }
   return null;
 }
 
+bool t = false;
 // HTML functions
 List<TeachingUnit> pareTUFromHTML(Document document) {
   List<TeachingUnit> uesObjects = new List<TeachingUnit>();
@@ -86,6 +98,7 @@ List<TeachingUnit> pareTUFromHTML(Document document) {
     double grade, max;
     String desc;
     if (child.children[0].text != 'UE') {
+
       // info => index:
       // 0 - Teaching unit name LUXXXXXX
       // 1 - Description fo the grade
@@ -102,7 +115,7 @@ List<TeachingUnit> pareTUFromHTML(Document document) {
         String max = grade.split('/')[1];
         grade = grade.split('/')[0];
         uesObjects[i].grades.add(new Grade(
-            grade: double.parse(grade), max: double.parse(max), desc: desc));
+            double.parse(grade), double.parse(max), desc, newGrade: true));
       }
     }
   });
@@ -112,6 +125,7 @@ List<TeachingUnit> pareTUFromHTML(Document document) {
    DateTime bTime = format.parse('${b.year}-'+monthToNo(b.month)+'-01');
    return bTime.compareTo(aTime);
   });
+
   return uesObjects;
 }
 
@@ -152,10 +166,8 @@ List<TeachingUnit> parseTUObjects(ues) {
 }
 
 // Models related functions
-
 List<TeachingUnit> sortTeachingUnits(List<TeachingUnit> teachingUnits) {
   teachingUnits.sort((a, b) {
-    if(a.grades == null) print(a.name);
     int aL = a.grades.length;
     int bL = b.grades.length;
 
@@ -165,6 +177,14 @@ List<TeachingUnit> sortTeachingUnits(List<TeachingUnit> teachingUnits) {
     return compareTwoTuTimes(b, a);
   });
   return teachingUnits;
+}
+
+bool hasUnviewedGrades(TeachingUnit tu) {
+  bool allViewed = false;
+  tu.grades.forEach((g) {
+    if (!g.viewed) allViewed = true;
+  });
+  return allViewed;
 }
 
 // Strings related function
@@ -255,21 +275,39 @@ Future<File> get _gradesFiles async {
 Future<File> saveToFile(List<TeachingUnit> teachingUnits) async {
   final file = await _gradesFiles;
   String jsonTeachingUnits = json.encode(teachingUnits);
-  print('eczerc: ' + jsonTeachingUnits);
   return file.writeAsString(jsonTeachingUnits);
 }
 
 Future<List<TeachingUnit>> loadGrades() async {
   final file = await _gradesFiles;
+  if(!file.existsSync()) return null;
   String content = await file.readAsString();
   if(content.length == 0) return null;
-  print('content : ${content}');
   dynamic json = jsonDecode(content);
-  print('json decoded : $json');
   List<TeachingUnit> teachingUnits = new List<TeachingUnit>();
   json.forEach((o) {
     teachingUnits.add(TeachingUnit.fromJson(o));
   });
-//  teachingUnits.forEach((o) => print(o.grades));
+
   return teachingUnits;
+}
+
+Future<void> deleteGradesFile() async{
+    final file = await _gradesFiles;
+    await file.delete();
+}
+
+// WIDGETS CONSTRUCTOS
+
+LinearGradient getLinearGradientBg() {
+  return LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Colors.lightBlue[400],
+        Colors.lightBlue,
+        Colors.lightBlue[600],
+        Colors.lightBlue[700],
+        Colors.lightBlue[800],
+      ]);
 }

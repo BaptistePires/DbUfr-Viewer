@@ -21,6 +21,7 @@ class _GradesPageState extends State<GradesPage> {
   bool _isInitialized = false;
   bool _cantConnect = false;
   bool _refreshing = false;
+
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
@@ -34,26 +35,17 @@ class _GradesPageState extends State<GradesPage> {
         child: Scaffold(
           appBar: _setUpAppBar(),
           body:
-              !_cantConnect ? Container(
+              !_cantConnect  ? Container(
                   padding: EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                        Colors.lightBlue[400],
-                        Colors.lightBlue,
-                        Colors.lightBlue[600],
-                        Colors.lightBlue[700],
-                        Colors.lightBlue[800],
-                      ])),
+                      gradient: getLinearGradientBg()),
                   child: _isInitialized ? _buildListView(context) : Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[800]),
                       strokeWidth: 3,
                     ),
                   ),
-                ) : Text('Can\'t connect to DbUfr or read saved data, try again lateror disconnect.'),
+                ) : _setUpCantConnect(),
           floatingActionButton: _setUpFloatingActionBtn(),
         ),
     );
@@ -89,8 +81,8 @@ class _GradesPageState extends State<GradesPage> {
                       child: Text('Non'),
                     ),
                     FlatButton(
-                      onPressed: () {
-                        clearSharedPreferences();
+                      onPressed: () async {
+                        await clearUserData();
                         Navigator.of(context).pushAndRemoveUntil(
                             _createRoute(), (Route<dynamic> route) => false);
                       },
@@ -135,7 +127,7 @@ class _GradesPageState extends State<GradesPage> {
             onPressed: () async {
               bool doDisconnectUser = await doDisconnect();
               if (doDisconnectUser) {
-                clearSharedPreferences();
+                await clearUserData();
                 Navigator.of(context).pushAndRemoveUntil(
                     _createRoute(), (Route<dynamic> route) => false);
               }
@@ -156,21 +148,26 @@ class _GradesPageState extends State<GradesPage> {
       // If he's, then we parse the saved data
       try{
         loadGrades().then((r) {
+          if(r==null) {
+            _refreshing = true;
+            refresh();
+            return;
+          }
           setState(() {
             ues = r;
             _isInitialized = true;
+            _cantConnect = false;
           });
         });
-      }catch(Exception) {
-        // If an error occurs during file's parsing
-        getCredentials().then((credentials) {
-          getHtmlFromDbUfr(credentials).then((html) {
-            parseHTML(args.htmlGrades);
-          });
+      }catch(e) {
+        setState(() {
+          _refreshing = true;
+          refresh();
         });
       }
 
     }
+
   }
 
   void parseHTML(String html) async {
@@ -197,7 +194,7 @@ class _GradesPageState extends State<GradesPage> {
           elevation: 5,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25.0),
-            side: BorderSide(color: Colors.transparent, width: 2),
+            side: BorderSide(color: !hasUnviewedGrades(ues[i]) ? Colors.transparent : Colors.red, width: 2),
           ),
           child: Container(
             padding: EdgeInsets.all(3),
@@ -207,9 +204,28 @@ class _GradesPageState extends State<GradesPage> {
                     child: ExpansionTile(
                       title: Text(
                           '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
-                              truncMonthToFull(ues[i].month)),
-                      subtitle: Text('${ues[i].desc}'),
+                              truncMonthToFull(ues[i].month),
+                      style: TextStyle(
+                          color: Colors.blue,
+                      ),),
+                      subtitle: Container(
+                        padding: EdgeInsets.only(top:5),
+                          child: Text('${ues[i].desc}', overflow: TextOverflow.ellipsis,),
+                      ),
                       children: _setUpGradesListForTU(i),
+                      onExpansionChanged: (change) {
+                        bool hasChanged = false;
+                        setState(() {
+                          ues[i].grades.forEach((g) {
+                            if(!g.viewed){
+                              g.viewed = true;
+                              hasChanged = true;
+                            };
+                          });
+                        });
+                         if(hasChanged)saveToFile(ues);
+
+                      },
                     ))
                 : Container(
                     padding: EdgeInsets.all(15),
@@ -221,11 +237,12 @@ class _GradesPageState extends State<GradesPage> {
                               truncMonthToFull(ues[i].month),
                           style: TextStyle(
                             fontSize: 15,
+                            color: Colors.blue
                           ),
                         ),
-                        Text(
-                          '${ues[i].desc}',
-                          style: TextStyle(fontSize: 14),
+                        Container(
+                          padding: EdgeInsets.only(top:5),
+                          child: Text('${ues[i].desc}', overflow: TextOverflow.ellipsis,),
                         )
                       ],
                     ),
@@ -256,7 +273,7 @@ class _GradesPageState extends State<GradesPage> {
               padding: EdgeInsets.only(left: 30, right: 30, bottom: 5),
               child: RichText(
                 text: TextSpan(
-                  style: TextStyle(fontSize: 13, color: Colors.black),
+                  style: TextStyle(fontSize: 13, color: g.newGrade  ? Colors.red : Colors.black),
                   children: <TextSpan>[
                     TextSpan(
                         text: '${g.grade}/${g.max}',
@@ -265,6 +282,7 @@ class _GradesPageState extends State<GradesPage> {
                   ],
                 ),
               ),
+
             )),
             SizedBox(
               height: 30,
@@ -276,24 +294,9 @@ class _GradesPageState extends State<GradesPage> {
     return gradesWidgets;
   }
 
-  List<Widget> setUpTUList() {
-    List<Widget> listTiles = new List<ListTile>();
-    ues.forEach((TeachingUnit tu) {
-      listTiles.add(Card(
-        borderOnForeground: false,
-        child: ListTile(
-          title: Text('oulele'),
-        ),
-      ));
-    });
-
-    return listTiles;
-  }
-
   Widget _setUpFloatingActionBtn() {
     return !_refreshing ? SpeedDial(
-      animationSpeed: 10,
-//      child: ,
+//      child: Icon(Icons.add),
       animatedIcon: AnimatedIcons.menu_close,
       children: [
         SpeedDialChild(
@@ -302,6 +305,7 @@ class _GradesPageState extends State<GradesPage> {
           onTap: () {
             setState(() {
               _refreshing = true;
+
             });
             refresh();
           }
@@ -316,12 +320,106 @@ class _GradesPageState extends State<GradesPage> {
   }
 
   void refresh() async {
+    Map<String, String> credentials = await getCredentials();
 
-    getCredentials().then((credentials) {
+    if(credentials['student_no'] == null || credentials['password'] == null) {
+      CredentialsArgument args = ModalRoute.of(context).settings.arguments;
+      credentials = {STUDENT_NO_KEY: args.studentNo, PASSWORD_KEY:args.password};
+    }
+
+
+
       getHtmlFromDbUfr(credentials).then((html) {
-        parseHTML(html);
-
+        try{
+          List<TeachingUnit> newTeachingUnits = pareTUFromHTML(parse(html));
+          newTeachingUnits.forEach((newTeachingUnData) {
+            bool teachingUExists = false;
+            ues.forEach((currentTu) {
+              if(newTeachingUnData.name == currentTu.name) {
+                teachingUExists = true;
+                if(newTeachingUnData.grades.length != currentTu.grades.length) {
+                  newTeachingUnData.grades.forEach((gradeFromQuery) {
+                    bool present =false;
+                    currentTu.grades.forEach((current_grade) {
+                      if(gradeFromQuery ==  current_grade) {
+                        present = true;
+                      }
+                    });
+                    gradeFromQuery.newGrade = true;
+                    if(!present) currentTu.grades.add(gradeFromQuery);
+                  });
+                }else{
+                  currentTu.grades.forEach((g) {
+                    g.newGrade = false;
+                  });
+                }
+              }
+            });
+            if(!teachingUExists) ues.add(newTeachingUnData);
+          });
+          setState(() {
+            _refreshing = false;
+            _cantConnect = false;
+            _isInitialized = true;
+          });
+        }catch(e){
+            setState(() {
+              _refreshing = false;
+              _cantConnect = true;
+            });
+        }
       });
-    });
+
+  }
+
+  Widget _setUpCantConnect() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: getLinearGradientBg(),
+      ),
+      padding: EdgeInsets.all(20),
+      child: Center(
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              color: Colors.white,
+            ),
+            child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Wrap(
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text('Erreur', style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
+                        ),),
+                        SizedBox(height: 10,),
+                        Divider(),
+                        SizedBox(height: 10,),
+                        Text(
+                            'Il y a eu une erreur lors de la connexion à Db ufr',
+                        style: TextStyle(
+                          fontSize: 17,
+                        ),),
+                        OutlineButton(
+                          onPressed: () {
+                            setState(() {
+                              refresh();
+                              _refreshing = true;
+                            });
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                )
+            )
+        ),
+      ),
+    );
+
   }
 }
