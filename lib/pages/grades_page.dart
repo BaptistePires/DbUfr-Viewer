@@ -206,93 +206,96 @@ class _GradesPageState extends State<GradesPage>
     });
   }
 
-  ListView _buildListView(context) {
+  Widget _buildListView(context) {
     final theme = Theme.of(context).copyWith(dividerColor: Colors.transparent);
 
-    return ListView.builder(
-      itemCount: ues.length,
-      scrollDirection: Axis.vertical,
-      padding: EdgeInsets.all(5),
-      itemBuilder: (context, i) {
-        return Card(
-          margin: EdgeInsets.all(10.0),
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0),
-            side: BorderSide(
-                color: !hasUnviewedGrades(ues[i])
-                    ? Colors.transparent
-                    : Colors.red,
-                width: 2),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(3),
-            child: ues[i].grades.length > 0
-                ? Theme(
-                    data: theme,
-                    // START TILE
-                    child: ExpansionTile(
-                      // TITLE
-                      title: Text(
-                        '${ues[i].desc}',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          letterSpacing: 1,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      // SUBTITLE
-                      subtitle: Container(
-                        padding: EdgeInsets.only(top: 5, left: 8),
-                        child: Text(
-                          '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
-                              truncMonthToFull(ues[i].month),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-
-                      // TILE CONTENT
-                      children: _setUpGradesListForTU(i),
-                      onExpansionChanged: (change) {
-                        bool hasChanged = false;
-                        setState(() {
-                          ues[i].grades.forEach((g) {
-                            if (!g.viewed) {
-                              g.viewed = true;
-                              hasChanged = true;
-                            }
-                          });
-                        });
-                        if (hasChanged) saveToFile(ues);
-                      },
-                    ))
-                : Container(
-                    padding: EdgeInsets.all(15),
-                    alignment: Alignment.center,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
+    return RefreshIndicator(
+      onRefresh: () => refresh(),
+      child: ListView.builder(
+        itemCount: ues.length,
+        scrollDirection: Axis.vertical,
+        padding: EdgeInsets.all(5),
+        itemBuilder: (context, i) {
+          return Card(
+            margin: EdgeInsets.all(10.0),
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25.0),
+              side: BorderSide(
+                  color: !hasUnviewedGrades(ues[i])
+                      ? Colors.transparent
+                      : Colors.red,
+                  width: 2),
+            ),
+            child: Container(
+              padding: EdgeInsets.all(3),
+              child: ues[i].grades.length > 0
+                  ? Theme(
+                      data: theme,
+                      // START TILE
+                      child: ExpansionTile(
+                        // TITLE
+                        title: Text(
                           '${ues[i].desc}',
                           style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.blue,
-                              letterSpacing: 1),
+                            color: Colors.blue,
+                            letterSpacing: 1,
+                          ),
                           textAlign: TextAlign.center,
                         ),
-                        Container(
+                        // SUBTITLE
+                        subtitle: Container(
                           padding: EdgeInsets.only(top: 5, left: 8),
                           child: Text(
-                            '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ${truncMonthToFull(ues[i].month)}',
-                            overflow: TextOverflow.ellipsis,
+                            '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
+                                truncMonthToFull(ues[i].month),
+                            textAlign: TextAlign.center,
                           ),
-                        )
-                      ],
+                        ),
+
+                        // TILE CONTENT
+                        children: _setUpGradesListForTU(i),
+                        onExpansionChanged: (change) {
+                          bool hasChanged = false;
+                          setState(() {
+                            ues[i].grades.forEach((g) {
+                              if (!g.viewed) {
+                                g.viewed = true;
+                                hasChanged = true;
+                              }
+                            });
+                          });
+                          if (hasChanged) saveToFile(ues);
+                        },
+                      ))
+                  : Container(
+                      padding: EdgeInsets.all(15),
+                      alignment: Alignment.center,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '${ues[i].desc}',
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue,
+                                letterSpacing: 1),
+                            textAlign: TextAlign.center,
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: 5, left: 8),
+                            child: Text(
+                              '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ${truncMonthToFull(ues[i].month)}',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-          ),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 
