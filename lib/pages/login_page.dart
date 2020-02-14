@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../src/functions.dart';
-import '../src/exceptions/Exceptions.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';

@@ -225,6 +225,10 @@ class _GradesPageState extends State<GradesPage> {
                     data: theme,
                     // START TILE
                     child: ExpansionTile(
+                      trailing: Icon(
+                        Icons.add,
+                        color: Colors.blue,
+                      ),
                       // TITLE
                       title: Text(
                         '${ues[i].desc}',
@@ -254,7 +258,6 @@ class _GradesPageState extends State<GradesPage> {
                               g.viewed = true;
                               hasChanged = true;
                             }
-                            ;
                           });
                         });
                         if (hasChanged) saveToFile(ues);
@@ -269,9 +272,10 @@ class _GradesPageState extends State<GradesPage> {
                         Text(
                           '${ues[i].desc}',
                           style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 16,
                               color: Colors.blue,
                               letterSpacing: 1),
+                          textAlign: TextAlign.center,
                         ),
                         Container(
                           padding: EdgeInsets.only(top: 5, left: 8),
