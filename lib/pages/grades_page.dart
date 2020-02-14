@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
 import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
+import 'package:dbufr_checker/src/LifeCycleEventHandler.dart';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:dbufr_checker/src/models/TeachingUnit.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,6 +32,10 @@ class _GradesPageState extends State<GradesPage> {
       setState(() {
         langHandler = value;
         _loading = false;
+
+        // Handle on resume
+        WidgetsBinding.instance.addObserver(
+            LifecycleEventHandler(resumeCallBack: () => refresh()));
       });
     });
   }
@@ -169,7 +174,6 @@ class _GradesPageState extends State<GradesPage> {
       try {
         loadGrades().then((r) {
           if (r == null) {
-            _refreshing = true;
             refresh();
             return;
           }
@@ -181,7 +185,6 @@ class _GradesPageState extends State<GradesPage> {
         });
       } catch (e) {
         setState(() {
-          _refreshing = true;
           refresh();
         });
       }
@@ -367,9 +370,6 @@ class _GradesPageState extends State<GradesPage> {
                       : null,
                   onTap: () {
                     if (_loading) return;
-                    setState(() {
-                      _refreshing = true;
-                    });
                     refresh();
                   }),
               SpeedDialChild(
@@ -399,7 +399,10 @@ class _GradesPageState extends State<GradesPage> {
           );
   }
 
-  void refresh() async {
+  Future<void> refresh() async {
+    setState(() {
+      _refreshing = true;
+    });
     Map<String, String> credentials = await getCredentials();
 
     if (credentials['student_no'] == null || credentials['password'] == null) {
@@ -496,10 +499,7 @@ class _GradesPageState extends State<GradesPage> {
                         ),
                         OutlineButton(
                           onPressed: () {
-                            setState(() {
-                              refresh();
-                              _refreshing = true;
-                            });
+                            refresh();
                           },
                         ),
                       ],
