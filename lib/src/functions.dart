@@ -4,6 +4,7 @@ import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:html/dom.dart' show Document;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -369,7 +370,29 @@ SnackBar setUpConnectDbUfrSnack(String text) {
   );
 }
 
-Container getLoadingScreen() {
+//Container getLoadingScreen() {
+//  return Container(
+//      width: double.infinity,
+//      height: double.infinity,
+//      decoration: BoxDecoration(gradient: getLinearGradientBg()),
+//      child: Column(
+//        mainAxisAlignment: MainAxisAlignment.center,
+//        crossAxisAlignment: CrossAxisAlignment.center,
+//        children: <Widget>[
+//          CircularProgressIndicator(),
+//          SizedBox(
+//            height: 60,
+//          ),
+//          Text('{ Loading }',
+//          style: TextStyle(
+//            fontSize: 30,
+//            letterSpacing: 1
+//          ),)
+//        ],
+//      ));
+//}
+
+Container getLoadingScreen(AnimationController parent) {
   return Container(
       width: double.infinity,
       height: double.infinity,
@@ -378,11 +401,17 @@ Container getLoadingScreen() {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          CircularProgressIndicator(
-            strokeWidth: 2,
-            backgroundColor: Colors.black,
+          SpinKitPouringHourglass(
+            color: Colors.black,
+            controller: parent,
           ),
-          Text('Loading')
+          SizedBox(
+            height: 60,
+          ),
+          Text(
+            '{ Loading }',
+            style: TextStyle(fontSize: 30, letterSpacing: 1),
+          )
         ],
       ));
 }

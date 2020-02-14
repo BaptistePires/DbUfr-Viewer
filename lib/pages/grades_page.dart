@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:math';
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
 import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
 import 'package:dbufr_checker/src/LifeCycleEventHandler.dart';
@@ -16,7 +16,8 @@ class GradesPage extends StatefulWidget {
   _GradesPageState createState() => _GradesPageState();
 }
 
-class _GradesPageState extends State<GradesPage> {
+class _GradesPageState extends State<GradesPage>
+    with SingleTickerProviderStateMixin {
   List<TeachingUnit> ues = new List<TeachingUnit>();
   bool _isInitialized = false;
   bool _cantConnect = false;
@@ -24,10 +25,13 @@ class _GradesPageState extends State<GradesPage> {
   bool _loading = true;
 
   LangHandlerSingleton langHandler;
+  AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 800));
     LangHandlerSingleton.getInstance().then((value) {
       setState(() {
         langHandler = value;
@@ -66,7 +70,7 @@ class _GradesPageState extends State<GradesPage> {
                         ),
                       ),
               )
-            : getLoadingScreen(),
+            : getLoadingScreen(_animationController),
         floatingActionButton: _setUpFloatingActionBtn(),
       ),
     );
@@ -228,10 +232,6 @@ class _GradesPageState extends State<GradesPage> {
                     data: theme,
                     // START TILE
                     child: ExpansionTile(
-                      trailing: Icon(
-                        Icons.add,
-                        color: Colors.blue,
-                      ),
                       // TITLE
                       title: Text(
                         '${ues[i].desc}',

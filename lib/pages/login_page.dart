@@ -14,7 +14,8 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => new _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
 
   // Flags
@@ -26,16 +27,21 @@ class _LoginPageState extends State<LoginPage> {
   bool _connected = false;
   bool _firstOpening = true;
   bool _loading = true;
+
   // Fields controllers
   final studentNoController = TextEditingController();
   final passwordController = TextEditingController();
 
+  // Others
   LangHandlerSingleton langHandler;
+  AnimationController _animationcontroller;
 
   @override
   void initState() {
     setState(() {
       _loading = true;
+      _animationcontroller = new AnimationController(
+          vsync: this, duration: Duration(milliseconds: 800));
     });
     LangHandlerSingleton.getInstance().then(((o) {
       setState(() {
@@ -54,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     if (_firstOpening) checkIfLogged();
     return _loading
-        ? getLoadingScreen()
+        ? getLoadingScreen(_animationcontroller)
         : Scaffold(
             floatingActionButton: FloatingActionButton(
               child: langHandler.getCurrentFlag(),

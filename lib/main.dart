@@ -1,3 +1,4 @@
+import 'package:dbufr_checker/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/grades_page.dart';
@@ -15,8 +16,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/login',
+      initialRoute: '/',
       routes: {
+        '/': (context) => Scaffold(body: HomePage()),
         '/login': (context) => Scaffold(
               body: LoginPage(),
             ),
