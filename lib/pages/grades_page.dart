@@ -55,6 +55,8 @@ class _GradesPageState extends State<GradesPage>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
+        // TODO : when dynamics color replace w/ fist value of linear gradient
+      backgroundColor: Colors.lightBlue[400],
         appBar: _setUpAppBar(),
         body: !_cantConnect || _loading
             ? Container(
@@ -147,6 +149,10 @@ class _GradesPageState extends State<GradesPage>
     return AppBar(
       title:
           !_loading ? Text(langHandler.getTranslationFor('grades')) : Text(''),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25)
+      ),
+
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(right: 10),

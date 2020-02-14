@@ -12,7 +12,6 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   LangHandlerSingleton langHandler;
   AnimationController _controller;
-  get studentNo => null;
 
   @override
   void initState() {

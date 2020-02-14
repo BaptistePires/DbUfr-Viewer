@@ -6,6 +6,8 @@
   "yes": "Oui",
   "no": "Non",
   "grades": "Notes",
+  "settings": "Paramètres",
+  "colors": "Couleurs",
 
   "login_connection": "Connexion",
   "login_student_no": "N° étudiant",
@@ -23,5 +25,7 @@
   "grades_data_update_success": "Les données ont été mise à jour avec succès",
   "grades_update_error": "Une erreur est survenue lors de la mise à jour des données.",
   "grades_no_grades": "Pas de notes",
-  "grades_confirm_disc": "Êtes-vous sûr de vouloir vous déconnecter ?"
+  "grades_confirm_disc": "Êtes-vous sûr de vouloir vous déconnecter ?",
+
+  "settings_background_gradient_params": "Dégradé de l'arrière plan"
 }

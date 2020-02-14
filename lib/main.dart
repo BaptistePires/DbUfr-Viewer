@@ -1,4 +1,5 @@
 import 'package:dbufr_checker/pages/home_page.dart';
+import 'package:dbufr_checker/pages/settings_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/grades_page.dart';
@@ -23,6 +24,9 @@ class MyApp extends StatelessWidget {
               body: LoginPage(),
             ),
         '/grades': (context) => Scaffold(body: GradesPage()),
+        '/settings': (context) => Scaffold(
+              body: SettingsPage(),
+            )
       },
     );
   }

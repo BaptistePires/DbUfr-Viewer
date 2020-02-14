@@ -6,6 +6,8 @@
   "yes": "Yes",
   "no": "No",
   "grades": "Grades",
+  "settings": "Settings",
+  "colors": "Colors",
 
   "login_connection": "Login",
   "login_student_no": "Student N°",
@@ -23,5 +25,7 @@
   "grades_data_update_success": "Data has been successfully updated.",
   "grades_update_error": "An error occurred while updating data",
   "grades_no_grades": "No grades",
-  "grades_confirm_disc": "Are you sure you want to log out ?"
+  "grades_confirm_disc": "Are you sure you want to log out ?",
+
+  "settings_background_gradient_params": "Gradient background settings"
 }

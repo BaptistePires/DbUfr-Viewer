@@ -33,7 +33,12 @@ dependencies:
   font_awesome_flutter: ^8.5.0
   flutter_local_notifications: ^1.1.6
   flutter_spinkit: ^4.1.1+1
+  flutter_launcher_icons: ^0.7.4
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
 
 dev_dependencies:
   flutter_test:
