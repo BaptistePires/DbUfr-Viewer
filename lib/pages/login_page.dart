@@ -178,8 +178,11 @@ class _LoginPageState extends State<LoginPage> {
         }else{
           _connected = true;
         }
-
       });
+      if(_credentialsError){
+        Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+            langHandler.getTranslationFor('login_credentials_error')));
+      }
       if(_credentialsError || _connectError){
         return;
       }

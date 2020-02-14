@@ -343,7 +343,9 @@ SnackBar setUpConnectDbUfrSnack(String text) {
           SizedBox(
             width: 15,
           ),
-          Text(text)
+          Flexible(
+            child: Text(text, overflow: TextOverflow.clip,),
+          )
         ],
       ),
     ),

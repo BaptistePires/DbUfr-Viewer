@@ -7,7 +7,6 @@
   "no": "Non",
   "grades": "Notes",
 
-
   "login_connection": "Connexion",
   "login_student_no": "N° étudiant",
   "login_password": "Mot de passe",
@@ -19,6 +18,7 @@
   "login_ok": "D'accord",
   "login_connect_error": "Une erreur est survenue lors de la connection à DbUfr, veuillez réessayé plus tard.",
   "login_info": "Info",
+  "login_credentials_error": "Votre n° étudiant ou votre mot de passe est incorrect.",
 
   "grades_data_update_success": "Les données ont été mise à jour avec succès",
   "grades_update_error": "Une erreur est survenue lors de la mise à jour des données.",
