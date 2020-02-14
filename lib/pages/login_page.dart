@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
+import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
+import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -23,16 +27,53 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   bool _connected = false;
   bool _firstOpening = true;
-
+  bool _loading = true;
   // Fields controllers
   final studentNoController = TextEditingController();
   final passwordController = TextEditingController();
 
+  LangHandlerSingleton langHandler;
+
 
   @override
+  void initState() {
+    setState(() {
+      _loading = true;
+    });
+    LangHandlerSingleton.getInstance().then(((o) {
+      setState(() {
+        this.langHandler = o;
+        this._loading = false;
+      });
+    }));
+  }
+
+  Future<void> nextLang() async {
+    await langHandler.nextLang();
+    return null;
+  }
+  @override
   Widget build(BuildContext context) {
+
     if (_firstOpening) checkIfLogged();
-    return new Scaffold(
+    return _loading ? getLoadingScreen():Scaffold(
+        floatingActionButton: FloatingActionButton(
+          child: langHandler.getCurrentFlag(),
+          onPressed: () {
+              if(!_loading){
+                setState(() {
+                  _loading = true;
+                });
+
+                Future(langHandler.nextLang).whenComplete(() {
+                  setState(() {
+                    _loading = false;
+                  });
+                });
+              }
+          },
+
+        ),
         body: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -67,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: <Widget>[
                       Text(
-                        'Connexion',
+                        langHandler.getTranslationFor('login_connection'),
                         style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 25,
@@ -181,12 +222,20 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Informations'),
+            title: Column(
+//              padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+//              child: Column(
+                children: <Widget>[
+                  Text(langHandler.getTranslationFor('login_info')),
+                  Divider(color: Colors.blue,thickness: 2,),
+                ],
+//              )
+            ),
             content: Text(
-                'La fonction \'Rester connecté\' peut présenter des risques si vous perdez votre téléphone.'),
+                langHandler.getTranslationFor("login_alert_remember_me")),
             actions: <Widget>[
               FlatButton(
-                child: Text('D\'accord'),
+                child: Text(langHandler.getTranslationFor('login_ok')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -223,7 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 iconSize: 19,
               ),
-              Text('Rester connecté'),
+              Text(langHandler.getTranslationFor('login_remember_me')),
               _setUpRememberMe(),
             ],
           ),
@@ -238,7 +287,7 @@ class _LoginPageState extends State<LoginPage> {
       keyboardType: TextInputType.number,
       autofocus: false,
       decoration: InputDecoration(
-        hintText: 'N° étudiant',
+        hintText: langHandler.getTranslationFor('login_student_no'),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(32.0),
@@ -249,7 +298,7 @@ class _LoginPageState extends State<LoginPage> {
 
       enabled: _connecting ? false : true,
       validator: (value) {
-        if (value.isEmpty) return 'Indiquez votre numéro d\'étudiant';
+        if (value.isEmpty) return langHandler.getTranslationFor('login_student_no_missing');
         return null;
       },
     );
@@ -260,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
       autofocus: false,
       obscureText: _obscureText,
       decoration: InputDecoration(
-        hintText: 'Mot de passe',
+        hintText: langHandler.getTranslationFor('login_password'),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(32.0),
@@ -278,7 +327,7 @@ class _LoginPageState extends State<LoginPage> {
       controller: passwordController,
       enabled: _connecting ? false : true,
       validator: (value) {
-        if (value.isEmpty) return 'Indiquez votre mot de passe';
+        if (value.isEmpty) return langHandler.getTranslationFor('login_password_missing');
         return null;
       },
     );
@@ -325,7 +374,7 @@ class _LoginPageState extends State<LoginPage> {
             widthFactor: 1,
           ),
         )
-            : Text('Se connecter',
+            : Text(langHandler.getTranslationFor('login_login'),
         style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 17

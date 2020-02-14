@@ -1,0 +1,26 @@
+{
+  "error": "Error",
+  "logout": "Logout",
+  "refresh": "Refresh",
+  "language": "Language",
+  "yes": "Yes",
+  "no": "No",
+  "grades": "Grades",
+
+  "login_connection": "Connection",
+  "login_student_no": "Student N°",
+  "login_password": "Password",
+  "login_remember_me": "Remember me",
+  "login_login": "Login",
+  "login_password_missing": "Please fill out this field.",
+  "login_student_no_missing": "Please fill out this field.",
+  "login_alert_remember_me": "Be careful if you lose your phone, someone could retrieve your password.",
+  "login_ok": "Alright",
+  "login_connect_error": "An error occurred when connecting to DbUfr, please try again later.",
+  "login_info": "Info",
+
+  "grades_data_update_success": "Data has been successfully updated.",
+  "grades_update_error": "An error occurred while updating data",
+  "grades_no_grades": "No grades",
+  "grades_confirm_disc": "Are you sure you want to log out ?"
+}

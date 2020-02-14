@@ -1,0 +1,27 @@
+{
+  "error": "Erreur",
+  "logout": "Déconnexion",
+  "refresh": "Rafraîchir",
+  "language": "Langue",
+  "yes": "Oui",
+  "no": "Non",
+  "grades": "Notes",
+
+
+  "login_connection": "Connexion",
+  "login_student_no": "N° étudiant",
+  "login_password": "Mot de passe",
+  "login_remember_me": "Rester connecté",
+  "login_login": "Se connecter",
+  "login_password_missing": "Veuillez remplir ce champ.",
+  "login_student_no_missing": "Veuillez remplir ce champ.",
+  "login_alert_remember_me": "La fonction 'Rester connecté' peut présenter des risques si vous perdez votre téléphone.",
+  "login_ok": "D'accord",
+  "login_connect_error": "Une erreur est survenue lors de la connection à DbUfr, veuillez réessayé plus tard.",
+  "login_info": "Info",
+
+  "grades_data_update_success": "Les données ont été mise à jour avec succès",
+  "grades_update_error": "Une erreur est survenue lors de la mise à jour des données.",
+  "grades_no_grades": "Pas de notes",
+  "grades_confirm_disc": "Êtes-vous sûr de vouloir vous déconnecter ?"
+}

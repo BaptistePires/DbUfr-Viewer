@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:html/dom.dart' show Document;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +18,7 @@ const String PASSWORD_KEY = 'password';
 const String DB_UFR_URL =
     'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
 const String FILE_NAME = 'grades.json';
+const String STRING_FILE_PATH = "assets/lang";
 
 Future<void> clearUserData() async {
   await clearSharedPreferences();
@@ -297,8 +299,20 @@ Future<void> deleteGradesFile() async {
   await file.delete();
 }
 
-// WIDGETS CONSTRUCTOS
+Future<File> _getLangFile(String langCode) async {
+  final path = await _localPath;
+  return File('$path/$STRING_FILE_PATH/$langCode.json');
+}
 
+Future<Map<String, dynamic>> loadLang(String langCode) async {
+  String content = await rootBundle.loadString('$STRING_FILE_PATH/$langCode.json');
+//  File file = await _getLangFile(langCode);
+//  if(!file.existsSync()) return null;
+//  String content = file.readAsStringSync();
+  dynamic json = jsonDecode(content);
+  return json;
+}
+// WIDGETS CONSTRUCTOS
 LinearGradient getLinearGradientBg() {
   return LinearGradient(
       begin: Alignment.topCenter,
@@ -336,27 +350,23 @@ SnackBar setUpConnectDbUfrSnack(String text) {
   );
 }
 
-// Animations functios
-Color colorVariation(int note) {
-  if (note <= 1) {
-    return Colors.blue[50];
-  } else if (note > 1 && note <= 2) {
-    return Colors.blue[100];
-  } else if (note > 2 && note <= 3) {
-    return Colors.blue[200];
-  } else if (note > 3 && note <= 4) {
-    return Colors.blue[300];
-  } else if (note > 4 && note <= 5) {
-    return Colors.blue[400];
-  } else if (note > 5 && note <= 6) {
-    return Colors.blue;
-  } else if (note > 6 && note <= 7) {
-    return Colors.blue[600];
-  } else if (note > 7 && note <= 8) {
-    return Colors.blue[700];
-  } else if (note > 8 && note <= 9) {
-    return Colors.blue[800];
-  } else if (note > 9 && note <= 10) {
-    return Colors.blue[900];
-  }
+Container getLoadingScreen() {
+  return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: getLinearGradientBg()
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          CircularProgressIndicator(
+              strokeWidth: 2,
+            backgroundColor: Colors.black,
+          ),
+          Text('Loading')
+        ],
+      )
+    );
 }

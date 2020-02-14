@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
+import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:dbufr_checker/src/models/TeachingUnit.dart';
+import 'package:flag/flag.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -21,6 +23,20 @@ class _GradesPageState extends State<GradesPage> {
   bool _isInitialized = false;
   bool _cantConnect = false;
   bool _refreshing = false;
+  bool _loading = true;
+
+  LangHandlerSingleton langHandler;
+
+  @override
+  void initState() {
+    super.initState();
+    LangHandlerSingleton.getInstance().then((value) {
+      setState(() {
+        langHandler = value;
+        _loading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,28 +46,29 @@ class _GradesPageState extends State<GradesPage> {
     if (ues.length >= 2) {
       ues = sortTeachingUnits(ues);
     }
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: _setUpAppBar(),
-        body: !_cantConnect
-            ? Container(
-                padding: EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(gradient: getLinearGradientBg()),
-                child: _isInitialized
-                    ? _buildListView(context)
-                    : Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.blue[800]),
-                          strokeWidth: 3,
-                        ),
-                      ),
-              )
-            : _setUpCantConnect(),
-        floatingActionButton: _setUpFloatingActionBtn(),
-      ),
-    );
+    return  WillPopScope(
+            onWillPop: _onWillPop,
+            child: Scaffold(
+              appBar: _setUpAppBar(),
+              body: !_cantConnect || _loading
+                  ? Container(
+                      padding: EdgeInsets.only(top: 10),
+                      decoration:
+                          BoxDecoration(gradient: getLinearGradientBg()),
+                      child: _isInitialized
+                          ? _buildListView(context)
+                          : Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.blue[800]),
+                                strokeWidth: 3,
+                              ),
+                            ),
+                    )
+                  : getLoadingScreen(),
+              floatingActionButton: !_loading ? _setUpFloatingActionBtn() : null,
+            ),
+          );
   }
 
   Route _createRoute() {
@@ -74,14 +91,14 @@ class _GradesPageState extends State<GradesPage> {
     return (await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: Text('Déconnexion'),
-                  content: Text('Êtes-vous sûr de vouloir vous déconnecter ? '),
+                  title: Text(langHandler.getTranslationFor('logout')),
+                  content: Text(langHandler.getTranslationFor('grades_confirm_desc')),
                   actions: <Widget>[
                     FlatButton(
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
-                      child: Text('Non'),
+                      child: Text(langHandler.getTranslationFor('no')),
                     ),
                     FlatButton(
                       onPressed: () async {
@@ -89,7 +106,7 @@ class _GradesPageState extends State<GradesPage> {
                         Navigator.of(context).pushAndRemoveUntil(
                             _createRoute(), (Route<dynamic> route) => false);
                       },
-                      child: Text('Oui'),
+                      child: Text(langHandler.getTranslationFor('yes')),
                     )
                   ],
                 ))) ??
@@ -100,20 +117,20 @@ class _GradesPageState extends State<GradesPage> {
     return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text('Déconnexion'),
-              content: Text('Êtes-vous sûr de vouloir vous déconnecter ? '),
+              title: Text(langHandler.getTranslationFor('logout')),
+              content: Text(langHandler.getTranslationFor('grades_confirm_disc')),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  child: Text('Non'),
+                  child: Text(langHandler.getTranslationFor('no')),
                 ),
                 FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
-                  child: Text('Oui'),
+                  child: Text(langHandler.getTranslationFor('yes')),
                 )
               ],
             )));
@@ -121,13 +138,14 @@ class _GradesPageState extends State<GradesPage> {
 
   AppBar _setUpAppBar() {
     return AppBar(
-      title: Text('Notes'),
+      title: !_loading ? Text(langHandler.getTranslationFor('grades')):Text(''),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(right: 10),
           child: IconButton(
             icon: Icon(Icons.power_settings_new),
             onPressed: () async {
+              if(_loading)return;
               bool doDisconnectUser = await doDisconnect();
               if (doDisconnectUser) {
                 await clearUserData();
@@ -208,7 +226,6 @@ class _GradesPageState extends State<GradesPage> {
                     data: theme,
                     // START TILE
                     child: ExpansionTile(
-
                       // TITLE
                       title: Text(
                         '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
@@ -277,7 +294,7 @@ class _GradesPageState extends State<GradesPage> {
     List<Grade> grades = ues[i].grades;
 
     if (grades.length == 0) {
-      gradesWidgets.add(Text('Pas de notes'));
+      gradesWidgets.add(Text(langHandler.getTranslationFor('grades_no_grades')));
     } else {
       ues[i].grades.forEach((Grade g) {
         gradesWidgets.add(Row(
@@ -320,10 +337,11 @@ class _GradesPageState extends State<GradesPage> {
 //      child: Icon(Icons.add),
             animatedIcon: AnimatedIcons.menu_close,
             animationSpeed: 250,
+            closeManually: true,
             children: [
               SpeedDialChild(
                   child: Icon(Icons.refresh),
-                  label: 'Rafraichir',
+                  label: langHandler.getTranslationFor('refresh'),
                   onTap: () {
                     setState(() {
                       _refreshing = true;
@@ -332,7 +350,7 @@ class _GradesPageState extends State<GradesPage> {
                   }),
               SpeedDialChild(
                   child: Icon(Icons.power_settings_new),
-                  label: 'Deconnexion',
+                  label: langHandler.getTranslationFor('logout'),
                   onTap: () async {
                     bool doDisconnectUser = await doDisconnect();
                     if (doDisconnectUser) {
@@ -340,6 +358,20 @@ class _GradesPageState extends State<GradesPage> {
                       Navigator.of(context).pushAndRemoveUntil(
                           _createRoute(), (Route<dynamic> route) => false);
                     }
+                  }),
+              SpeedDialChild(
+                  child: langHandler.getCurrentFlag(),
+                  label: langHandler.getTranslationFor('language'),
+                  onTap: () {
+                    setState(() {
+                      _loading = true;
+                    });
+
+                    Future(langHandler.nextLang).then((value){
+                      setState(() {
+                        _loading = false;
+                      });
+                    });
                   })
             ],
           )
@@ -401,7 +433,7 @@ class _GradesPageState extends State<GradesPage> {
           _refreshing = false;
           if (ues.length > 0) {
             Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-                'Impossible de mettre à jour les données.'));
+                langHandler.getTranslationFor('grades_update_error')));
           }
         });
       }
@@ -429,7 +461,7 @@ class _GradesPageState extends State<GradesPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          'Erreur',
+                          langHandler.getTranslationFor('error'),
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -441,7 +473,7 @@ class _GradesPageState extends State<GradesPage> {
                           height: 10,
                         ),
                         Text(
-                          'Il y a eu une erreur lors de la connexion à Db ufr',
+                          langHandler.getTranslationFor('login_connect_error'),
                           style: TextStyle(
                             fontSize: 17,
                           ),
@@ -464,11 +496,8 @@ class _GradesPageState extends State<GradesPage> {
 
   void _showSnackBarSuccessRefresh() {
     Scaffold.of(context).showSnackBar(
-        setUpConnectDbUfrSnack('Données mises à jour avec succès.'));
+        setUpConnectDbUfrSnack(langHandler.getTranslationFor('grades_data_update_success')));
   }
 
-
-  void testColorAnim() {
-
-  }
+  void testColorAnim() {}
 }
