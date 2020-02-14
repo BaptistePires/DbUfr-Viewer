@@ -25,9 +25,10 @@ class LangHandlerSingleton {
 
   Image getCurrentFlag() => this.langs[this.currentLang];
 
-  static Future<LangHandlerSingleton> getInstance([String langCode = DEFAULT_LANG]) async  {
+  static Future<LangHandlerSingleton> getInstance() async  {
     if(__instance == null) {
-      __instance = LangHandlerSingleton(currentLang: langCode);
+      String lang = await getSavedLangPref();
+      __instance = LangHandlerSingleton(currentLang: lang == null ? DEFAULT_LANG : lang);
       await __instance.loadTranslations();
     }
     return __instance;
@@ -41,6 +42,7 @@ class LangHandlerSingleton {
     List<String> availableLangs = this.langs.keys.toList();
     int currentId = availableLangs.indexOf(this.currentLang);
     this.currentLang = availableLangs[(currentId + 1) % availableLangs.length];
+    saveLangPref(currentLang);
     await loadTranslations();
   }
 

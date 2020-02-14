@@ -15,10 +15,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
+const String LANG_KEY = 'lang';
+
 const String DB_UFR_URL =
     'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
 const String FILE_NAME = 'grades.json';
 const String STRING_FILE_PATH = "assets/lang";
+
 
 Future<void> clearUserData() async {
   await clearSharedPreferences();
@@ -52,6 +55,16 @@ Future<Map<String, String>> getCredentials() async {
 Future<void> clearSharedPreferences() async {
   SharedPreferences sp = await SharedPreferences.getInstance();
   sp.clear();
+}
+
+Future<String> getSavedLangPref() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  return sp.getString(LANG_KEY);
+}
+
+Future<void> saveLangPref(String lang) async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  sp.setString(LANG_KEY, lang);
 }
 
 // Http functions

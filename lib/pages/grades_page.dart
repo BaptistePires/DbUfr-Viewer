@@ -38,6 +38,7 @@ class _GradesPageState extends State<GradesPage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
@@ -66,7 +67,7 @@ class _GradesPageState extends State<GradesPage> {
           ),
         )
             : getLoadingScreen(),
-        floatingActionButton: !_loading ? _setUpFloatingActionBtn() : null,
+        floatingActionButton: _setUpFloatingActionBtn(),
       ),
     );
   }
@@ -347,11 +348,13 @@ class _GradesPageState extends State<GradesPage> {
       animatedIcon: AnimatedIcons.menu_close,
       animationSpeed: 300,
       closeManually: true,
+      curve: Curves.fastOutSlowIn,
       children: [
         SpeedDialChild(
             child: Icon(Icons.power_settings_new),
-            label: langHandler.getTranslationFor('logout'),
+            label: !_loading ? langHandler.getTranslationFor('logout') : null,
             onTap: () async {
+              if(_loading)return;
               bool doDisconnectUser = await doDisconnect();
               if (doDisconnectUser) {
                 await clearUserData();
@@ -361,17 +364,19 @@ class _GradesPageState extends State<GradesPage> {
             }),
         SpeedDialChild(
             child: Icon(Icons.refresh),
-            label: langHandler.getTranslationFor('refresh'),
+            label: !_loading ? langHandler.getTranslationFor('refresh') : null,
             onTap: () {
+              if(_loading)return;
               setState(() {
                 _refreshing = true;
               });
               refresh();
             }),
         SpeedDialChild(
-            child: langHandler.getCurrentFlag(),
-            label: langHandler.getTranslationFor('language'),
+            child: !_loading ? langHandler.getCurrentFlag() : null,
+            label: !_loading ? langHandler.getTranslationFor('language') : null,
             onTap: () {
+              if(_loading)return;
               setState(() {
                 _loading = true;
               });
