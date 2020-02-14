@@ -6,9 +6,8 @@ class Grade {
   String desc;
   bool viewed;
   bool newGrade = false;
-  Grade(this.grade, this.max, this.desc, {this.viewed = false, this.newGrade = false});
-
-
+  Grade(this.grade, this.max, this.desc,
+      {this.viewed = false, this.newGrade = false});
 
   Grade.fromJson(Map<String, dynamic> json)
       : grade = json['grade'],
@@ -24,8 +23,11 @@ class Grade {
         'viewed': this.viewed
       };
 
-  bool operator ==(o) => o is Grade && this.grade == o.grade && this.max == o.max && this.desc == o.desc;
+  bool operator ==(o) =>
+      o is Grade &&
+      this.grade == o.grade &&
+      this.max == o.max &&
+      this.desc == o.desc;
 
   int get hashCode => grade.round() + max.round() + desc.length % 12;
-  }
-
+}

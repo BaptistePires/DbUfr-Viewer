@@ -3,15 +3,12 @@ import 'package:dbufr_checker/src/CrendentialsArgument.dart';
 import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:dbufr_checker/src/models/TeachingUnit.dart';
-import 'package:flag/flag.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
 import 'package:html/parser.dart' show parse;
 import '../src/functions.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class GradesPage extends StatefulWidget {
   @override
@@ -38,7 +35,6 @@ class _GradesPageState extends State<GradesPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized) {
@@ -53,19 +49,18 @@ class _GradesPageState extends State<GradesPage> {
         appBar: _setUpAppBar(),
         body: !_cantConnect || _loading
             ? Container(
-          padding: EdgeInsets.only(top: 10),
-          decoration:
-          BoxDecoration(gradient: getLinearGradientBg()),
-          child: _isInitialized
-              ? _buildListView(context)
-              : Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  Colors.blue[800]),
-              strokeWidth: 3,
-            ),
-          ),
-        )
+                padding: EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(gradient: getLinearGradientBg()),
+                child: _isInitialized
+                    ? _buildListView(context)
+                    : Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.blue[800]),
+                          strokeWidth: 3,
+                        ),
+                      ),
+              )
             : getLoadingScreen(),
         floatingActionButton: _setUpFloatingActionBtn(),
       ),
@@ -90,40 +85,38 @@ class _GradesPageState extends State<GradesPage> {
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(
-              title: Text(langHandler.getTranslationFor('logout')),
-              content: Text(
-                  langHandler.getTranslationFor('grades_confirm_desc')),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: Text(langHandler.getTranslationFor('no')),
-                ),
-                FlatButton(
-                  onPressed: () async {
-                    await clearUserData();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        _createRoute(), (Route<dynamic> route) => false);
-                  },
-                  child: Text(langHandler.getTranslationFor('yes')),
-                )
-              ],
-            ))) ??
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(langHandler.getTranslationFor('logout')),
+                  content: Text(
+                      langHandler.getTranslationFor('grades_confirm_desc')),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text(langHandler.getTranslationFor('no')),
+                    ),
+                    FlatButton(
+                      onPressed: () async {
+                        await clearUserData();
+                        Navigator.of(context).pushAndRemoveUntil(
+                            _createRoute(), (Route<dynamic> route) => false);
+                      },
+                      child: Text(langHandler.getTranslationFor('yes')),
+                    )
+                  ],
+                ))) ??
         false;
   }
 
   Future<bool> doDisconnect() async {
     return (await showDialog(
         context: context,
-        builder: (context) =>
-            AlertDialog(
+        builder: (context) => AlertDialog(
               title: Text(langHandler.getTranslationFor('logout')),
-              content: Text(
-                  langHandler.getTranslationFor('grades_confirm_disc')),
+              content:
+                  Text(langHandler.getTranslationFor('grades_confirm_disc')),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () {
@@ -143,8 +136,8 @@ class _GradesPageState extends State<GradesPage> {
 
   AppBar _setUpAppBar() {
     return AppBar(
-      title: !_loading ? Text(langHandler.getTranslationFor('grades')) : Text(
-          ''),
+      title:
+          !_loading ? Text(langHandler.getTranslationFor('grades')) : Text(''),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(right: 10),
@@ -166,10 +159,7 @@ class _GradesPageState extends State<GradesPage> {
   }
 
   void setup() {
-    CredentialsArgument args = ModalRoute
-        .of(context)
-        .settings
-        .arguments;
+    CredentialsArgument args = ModalRoute.of(context).settings.arguments;
 
     // If the user is not already logged in
     if (args.htmlGrades != null) {
@@ -230,68 +220,69 @@ class _GradesPageState extends State<GradesPage> {
           ),
           child: Container(
             padding: EdgeInsets.all(3),
-
             child: ues[i].grades.length > 0
                 ? Theme(
-                data: theme,
-                // START TILE
-                child: ExpansionTile(
-                  // TITLE
-                  title: Text('${ues[i].desc}',
-                    style: TextStyle(
-                        color: Colors.blue,
-                        letterSpacing: 1,
-                    ),
-                    textAlign: TextAlign.center,
+                    data: theme,
+                    // START TILE
+                    child: ExpansionTile(
+                      // TITLE
+                      title: Text(
+                        '${ues[i].desc}',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          letterSpacing: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      // SUBTITLE
+                      subtitle: Container(
+                        padding: EdgeInsets.only(top: 5, left: 8),
+                        child: Text(
+                          '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
+                              truncMonthToFull(ues[i].month),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
 
-
-                  ),
-                  // SUBTITLE
-                  subtitle: Container(
-                    padding: EdgeInsets.only(top: 5, left: 8),
-                    child: Text(
-                      '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
-                          truncMonthToFull(ues[i].month),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                  // TILE CONTENT
-                  children: _setUpGradesListForTU(i),
-                  onExpansionChanged: (change) {
-                    bool hasChanged = false;
-                    setState(() {
-                      ues[i].grades.forEach((g) {
-                        if (!g.viewed) {
-                          g.viewed = true;
-                          hasChanged = true;
-                        }
-                        ;
-                      });
-                    });
-                    if (hasChanged) saveToFile(ues);
-                  },
-                ))
+                      // TILE CONTENT
+                      children: _setUpGradesListForTU(i),
+                      onExpansionChanged: (change) {
+                        bool hasChanged = false;
+                        setState(() {
+                          ues[i].grades.forEach((g) {
+                            if (!g.viewed) {
+                              g.viewed = true;
+                              hasChanged = true;
+                            }
+                            ;
+                          });
+                        });
+                        if (hasChanged) saveToFile(ues);
+                      },
+                    ))
                 : Container(
-              padding: EdgeInsets.all(15),
-              alignment: Alignment.center,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text('${ues[i].desc}',
-                    style: TextStyle(
-                        fontSize: 15, color: Colors.blue, letterSpacing: 1),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 5, left: 8),
-                    child: Text('${ues[i].name} [${ues[i].group}] - ${ues[i]
-                        .year} - ${truncMonthToFull(ues[i].month)}',
-                      overflow: TextOverflow.ellipsis,
+                    padding: EdgeInsets.all(15),
+                    alignment: Alignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          '${ues[i].desc}',
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.blue,
+                              letterSpacing: 1),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(top: 5, left: 8),
+                          child: Text(
+                            '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ${truncMonthToFull(ues[i].month)}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
-            ),
+                  ),
           ),
         );
       },
@@ -303,8 +294,8 @@ class _GradesPageState extends State<GradesPage> {
     List<Grade> grades = ues[i].grades;
 
     if (grades.length == 0) {
-      gradesWidgets.add(
-          Text(langHandler.getTranslationFor('grades_no_grades')));
+      gradesWidgets
+          .add(Text(langHandler.getTranslationFor('grades_no_grades')));
     } else {
       ues[i].grades.forEach((Grade g) {
         gradesWidgets.add(Row(
@@ -316,21 +307,22 @@ class _GradesPageState extends State<GradesPage> {
             Expanded(
 //                  padding: EdgeInsets.only(left:30, bottom: 10),
                 child: Padding(
-                  padding: EdgeInsets.only(left: 30, right: 30, bottom: 5),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: g.newGrade ? Colors.red : Colors.black),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: '${g.grade}/${g.max}',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                        TextSpan(text: ' ${g.desc}')
-                      ],
-                    ),
-                  ),
-                )),
+              padding: EdgeInsets.only(left: 30, right: 30, bottom: 5),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                      fontSize: 13,
+                      color: g.newGrade ? Colors.red : Colors.black),
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: '${g.grade}/${g.max}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15)),
+                    TextSpan(text: ' ${g.desc}')
+                  ],
+                ),
+              ),
+            )),
             SizedBox(
               height: 30,
             )
@@ -345,66 +337,69 @@ class _GradesPageState extends State<GradesPage> {
     return !_refreshing
         ? SpeedDial(
 //      child: Icon(Icons.add),
-      animatedIcon: AnimatedIcons.menu_close,
-      animationSpeed: 300,
-      closeManually: true,
-      curve: Curves.fastOutSlowIn,
-      children: [
-        SpeedDialChild(
-            child: Icon(Icons.power_settings_new),
-            label: !_loading ? langHandler.getTranslationFor('logout') : null,
-            onTap: () async {
-              if(_loading)return;
-              bool doDisconnectUser = await doDisconnect();
-              if (doDisconnectUser) {
-                await clearUserData();
-                Navigator.of(context).pushAndRemoveUntil(
-                    _createRoute(), (Route<dynamic> route) => false);
-              }
-            }),
-        SpeedDialChild(
-            child: Icon(Icons.refresh),
-            label: !_loading ? langHandler.getTranslationFor('refresh') : null,
-            onTap: () {
-              if(_loading)return;
-              setState(() {
-                _refreshing = true;
-              });
-              refresh();
-            }),
-        SpeedDialChild(
-            child: !_loading ? langHandler.getCurrentFlag() : null,
-            label: !_loading ? langHandler.getTranslationFor('language') : null,
-            onTap: () {
-              if(_loading)return;
-              setState(() {
-                _loading = true;
-              });
+            animatedIcon: AnimatedIcons.menu_close,
+            animationSpeed: 300,
+            closeManually: true,
+            curve: Curves.fastOutSlowIn,
+            children: [
+              SpeedDialChild(
+                  child: Icon(Icons.power_settings_new),
+                  label: !_loading
+                      ? langHandler.getTranslationFor('logout')
+                      : null,
+                  onTap: () async {
+                    if (_loading) return;
+                    bool doDisconnectUser = await doDisconnect();
+                    if (doDisconnectUser) {
+                      await clearUserData();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          _createRoute(), (Route<dynamic> route) => false);
+                    }
+                  }),
+              SpeedDialChild(
+                  child: Icon(Icons.refresh),
+                  label: !_loading
+                      ? langHandler.getTranslationFor('refresh')
+                      : null,
+                  onTap: () {
+                    if (_loading) return;
+                    setState(() {
+                      _refreshing = true;
+                    });
+                    refresh();
+                  }),
+              SpeedDialChild(
+                  child: !_loading ? langHandler.getCurrentFlag() : null,
+                  label: !_loading
+                      ? langHandler.getTranslationFor('language')
+                      : null,
+                  onTap: () {
+                    if (_loading) return;
+                    setState(() {
+                      _loading = true;
+                    });
 
-              Future(langHandler.nextLang).then((value) {
-                setState(() {
-                  _loading = false;
-                });
-              });
-            })
-      ],
-    )
+                    Future(langHandler.nextLang).then((value) {
+                      setState(() {
+                        _loading = false;
+                      });
+                    });
+                  })
+            ],
+          )
         : FloatingActionButton(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-      ),
-      onPressed: () {},
-    );
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+            onPressed: () {},
+          );
   }
 
   void refresh() async {
     Map<String, String> credentials = await getCredentials();
 
     if (credentials['student_no'] == null || credentials['password'] == null) {
-      CredentialsArgument args = ModalRoute
-          .of(context)
-          .settings
-          .arguments;
+      CredentialsArgument args = ModalRoute.of(context).settings.arguments;
       credentials = {
         STUDENT_NO_KEY: args.studentNo,
         PASSWORD_KEY: args.password
@@ -512,8 +507,7 @@ class _GradesPageState extends State<GradesPage> {
   }
 
   void _showSnackBarSuccessRefresh() {
-    Scaffold.of(context).showSnackBar(
-        setUpConnectDbUfrSnack(
-            langHandler.getTranslationFor('grades_data_update_success')));
+    Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+        langHandler.getTranslationFor('grades_data_update_success')));
   }
 }

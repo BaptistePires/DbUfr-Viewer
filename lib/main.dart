@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/grades_page.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -16,7 +17,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
-        '/login': (context) => Scaffold(body: LoginPage(),),
+        '/login': (context) => Scaffold(
+              body: LoginPage(),
+            ),
         '/grades': (context) => Scaffold(body: GradesPage()),
       },
     );

@@ -22,7 +22,6 @@ const String DB_UFR_URL =
 const String FILE_NAME = 'grades.json';
 const String STRING_FILE_PATH = "assets/lang";
 
-
 Future<void> clearUserData() async {
   await clearSharedPreferences();
   await deleteGradesFile();
@@ -318,13 +317,15 @@ Future<File> _getLangFile(String langCode) async {
 }
 
 Future<Map<String, dynamic>> loadLang(String langCode) async {
-  String content = await rootBundle.loadString('$STRING_FILE_PATH/$langCode.json');
+  String content =
+      await rootBundle.loadString('$STRING_FILE_PATH/$langCode.json');
 //  File file = await _getLangFile(langCode);
 //  if(!file.existsSync()) return null;
 //  String content = file.readAsStringSync();
   dynamic json = jsonDecode(content);
   return json;
 }
+
 // WIDGETS CONSTRUCTOS
 LinearGradient getLinearGradientBg() {
   return LinearGradient(
@@ -357,7 +358,10 @@ SnackBar setUpConnectDbUfrSnack(String text) {
             width: 15,
           ),
           Flexible(
-            child: Text(text, overflow: TextOverflow.clip,),
+            child: Text(
+              text,
+              overflow: TextOverflow.clip,
+            ),
           )
         ],
       ),
@@ -369,19 +373,16 @@ Container getLoadingScreen() {
   return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(
-        gradient: getLinearGradientBg()
-      ),
+      decoration: BoxDecoration(gradient: getLinearGradientBg()),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           CircularProgressIndicator(
-              strokeWidth: 2,
+            strokeWidth: 2,
             backgroundColor: Colors.black,
           ),
           Text('Loading')
         ],
-      )
-    );
+      ));
 }

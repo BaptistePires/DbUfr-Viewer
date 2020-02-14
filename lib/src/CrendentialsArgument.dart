@@ -3,5 +3,4 @@ class CredentialsArgument {
   final String password;
   final String htmlGrades;
   CredentialsArgument(this.studentNo, this.password, {this.htmlGrades});
-
 }
