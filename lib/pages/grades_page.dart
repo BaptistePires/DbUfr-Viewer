@@ -325,7 +325,7 @@ class _GradesPageState extends State<GradesPage> {
                         TextSpan(
                             text: '${g.grade}/${g.max}',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                        TextSpan(text: ' - ${g.desc}')
+                        TextSpan(text: ' ${g.desc}')
                       ],
                     ),
                   ),
