@@ -10,6 +10,7 @@
   "colors": "Couleurs",
   "save": "Sauvegarder",
   "reset": "Réinitialiser",
+  "text": "Texte",
 
   "login_connection": "Connexion",
   "login_student_no": "N° étudiant",
@@ -32,5 +33,7 @@
   "settings_background_gradient_params": "Dégradé de l'arrière plan",
   "settings_primary_color_params": "Couleur principale",
   "settings_no_more_colors": "Vous ne pouvez pas ajouté plus de couleurs.",
-  "settings_min_two_colors": "Vous devez garder au minimum deux couleurs."
+  "settings_min_two_colors": "Vous devez garder au minimum deux couleurs.",
+  "settings_title_font_size": "Title font size",
+  "settings_subtitle_font_size": "Subtitle font size"
 }

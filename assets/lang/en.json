@@ -10,6 +10,7 @@
   "colors": "Colors",
   "save": "Save",
   "reset": "Reset",
+  "text": "Text",
 
   "login_connection": "Login",
   "login_student_no": "Student N°",
@@ -32,5 +33,7 @@
   "settings_background_gradient_params": "Gradient background settings",
   "settings_primary_color_params": "Main color",
   "settings_no_more_colors": "You can't add more colors.",
-  "settings_min_two_colors": "You have to keep at least two colors."
+  "settings_min_two_colors": "You have to keep at least two colors.",
+  "settings_title_font_size": "Taille de la police des titres",
+  "settings_subtitle_font_size": "Taille de la police des sous-titres"
 }

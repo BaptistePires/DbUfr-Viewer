@@ -19,13 +19,13 @@ class UserSettings{
   double primaryColor;
 
   /// [titleFontSize] Font size for titles. TODO : define range
-  int titleFontSize;
+  double titleFontSize;
 
   /// [subtitleFontSize] Font size for subtitles and texts
-  int subtitlesFontSize;
+  double subtitlesFontSize;
 
   UserSettings({this.linearBgColors = DEFAULT_GRADIENT, this.primaryColor = 110,
-  this.titleFontSize = 16, this.subtitlesFontSize = 13});
+  this.titleFontSize = 20, this.subtitlesFontSize = 10});
 
   Map<String, dynamic> get asMap{
     return {

@@ -19,6 +19,8 @@ class _SettingsPageState extends State<SettingsPage>
   // Buffer values
   List<double> tmpLinear;
   double tmpPrimaryColor;
+  double _tmpTitleFontSize;
+  double _tmpSubtitleFontSize;
 
   LangHandlerSingleton langHandler;
   AnimationController _animationController;
@@ -43,13 +45,13 @@ class _SettingsPageState extends State<SettingsPage>
         this.userSettings = userSettings;
         tmpLinear = List.from(userSettings.asMap[LINEAR_GRADIENT_NAME]);
         tmpPrimaryColor = userSettings.asMap[PRIMARY_COLOR_NAME];
+        _tmpTitleFontSize = userSettings.titleFontSize;
+        _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
+        print(userSettings.subtitlesFontSize);
         _loadingSettings = false;
       });
     });
   }
-
-  double v = 0;
-  List<double> _linearGradient = [195, 202];
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +80,8 @@ class _SettingsPageState extends State<SettingsPage>
     List<Widget> gradientParams = new List<Widget>();
 
     gradientParams.add(Text(
-        langHandler.getTranslationFor('settings_background_gradient_params')));
+        langHandler.getTranslationFor('settings_background_gradient_params'),
+        style:TextStyle(fontSize: _tmpTitleFontSize)), );
 
     gradientParams += _formatGradientParamsSliders();
 
@@ -104,7 +107,7 @@ class _SettingsPageState extends State<SettingsPage>
               Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
                   langHandler.getTranslationFor('settings_no_more_colors')));
             } else {
-              tmpLinear.add(0);
+              tmpLinear.add(tmpLinear[tmpLinear.length-1]);
             }
           });
         },
@@ -127,7 +130,10 @@ class _SettingsPageState extends State<SettingsPage>
       height: 20,
     ));
     gradientParams.add(
-        Text(langHandler.getTranslationFor('settings_primary_color_params')));
+        Text(langHandler.getTranslationFor('settings_primary_color_params'),
+        style: TextStyle(
+          fontSize: _tmpTitleFontSize
+        ),));
     gradientParams += _setUpPrimaryColorParameters();
 
 
@@ -223,7 +229,9 @@ class _SettingsPageState extends State<SettingsPage>
 
   AppBar _setUpAppbar() {
     return AppBar(
-      title: Text(langHandler.getTranslationFor('settings')),
+      title: Text(langHandler.getTranslationFor('settings'),
+      style: TextStyle(fontSize: _tmpTitleFontSize),),
+      backgroundColor: colorFromDouble(tmpPrimaryColor),
       centerTitle: true,
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -259,36 +267,133 @@ class _SettingsPageState extends State<SettingsPage>
   }
 
   Widget _buildListView() {
-    return ListView.builder(
+    return ListView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(5),
-        itemCount: 2,
-        itemBuilder: (context, i) {
-          return new Card(
+        children: <Widget>[
+          Card(
             color: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))
+            ),
             child: ExpansionTile(
-              title: Text(langHandler.getTranslationFor('colors')),
+              title: Text(langHandler.getTranslationFor('colors'),
+                  style:TextStyle(fontSize: _tmpTitleFontSize,
+                      color: colorFromDouble(tmpPrimaryColor))),
               children: <Widget>[
-                Card(
-                  elevation: 30,
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      children: _setUpLinearGradientParameters(),
+                Container(
+                  padding: EdgeInsets.all(3),
+
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(20)
+                  ),
+                  child:Card(
+//                  elevation: 30,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        children: _setUpLinearGradientParameters(),
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          );
-        });
+          ),
+          Card(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20))
+            ),
+            child: ExpansionTile(
+              title: Text(langHandler.getTranslationFor('text'),
+                  style:TextStyle(fontSize: _tmpTitleFontSize,
+                      color: colorFromDouble(tmpPrimaryColor))),
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(3),
+
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(20)
+                  ),
+                  child:Card(
+//                  elevation: 30,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        children: _setUpTextParameters(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ]);
+  }
+
+
+  List<Widget> _setUpTextParameters() {
+    List<Widget> txtParams = new List<Widget>();
+    txtParams.add(
+        Text(langHandler.getTranslationFor('settings_title_font_size'),
+          style: TextStyle(
+              fontSize: _tmpTitleFontSize
+          ),)
+    );
+    txtParams.add(
+      Slider(
+        value: _tmpTitleFontSize,
+        min: 15,
+        max: 25,
+        divisions: 10,
+        label: _tmpTitleFontSize.toString(),
+        onChanged: (v) {
+          setState(() {
+            _tmpTitleFontSize = v;
+          });
+        },
+      )
+    );
+
+    txtParams.add(
+        Text(langHandler.getTranslationFor('settings_subtitle_font_size'),
+          style: TextStyle(
+              fontSize: _tmpSubtitleFontSize
+          ),)
+    );
+    txtParams.add(
+        Slider(
+          value: _tmpSubtitleFontSize,
+          min: 10,
+          max: 20,
+          divisions: 10,
+          label: _tmpSubtitleFontSize.toString(),
+          onChanged: (v) {
+            setState(() {
+              _tmpSubtitleFontSize= v;
+            });
+          },
+        )
+    );
+
+    return txtParams;
   }
 
   Widget _setUpBottomAppBar() {
     return BottomNavigationBar(
-      backgroundColor: colorFromDouble((tmpPrimaryColor+5)%360),
+      backgroundColor: colorFromDouble(tmpLinear[tmpLinear.length-1]),
       selectedLabelStyle: TextStyle(color: Colors.black, fontSize: 14),
       unselectedFontSize: 14,
+
       onTap: (i) {
         if(i==0){
           setState(() {
@@ -296,9 +401,17 @@ class _SettingsPageState extends State<SettingsPage>
             tmpPrimaryColor = userSettings.asMap[PRIMARY_COLOR_NAME];
           });
         }else if(i==1){
+          setState(() {
+            userSettings.linearBgColors = tmpLinear;
+            userSettings.primaryColor = tmpPrimaryColor;
+          });
+
+
           saveUserSettings(userSettings);
+
         }
       },
+
       items: [
         BottomNavigationBarItem(
           icon: Icon(
