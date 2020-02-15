@@ -20,7 +20,7 @@ class TeachingUnit {
         desc = jsonTu['desc'],
         grades = jsonTu['grades'].length > 0
             ? jsonTu['grades']
-                .map((o) => Grade.fromJson(o))
+                .asMap((o) => Grade.fromJson(o))
                 .toList()
                 .cast<Grade>()
             : new List<Grade>();

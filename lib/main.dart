@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: '/settings',
       routes: {
-        '/': (context) => Scaffold(body: HomePage()),
+//        '/': (context) => Scaffold(body: HomePage()),
         '/login': (context) => Scaffold(
               body: LoginPage(),
             ),

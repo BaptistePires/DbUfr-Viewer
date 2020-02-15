@@ -8,6 +8,8 @@
   "grades": "Grades",
   "settings": "Settings",
   "colors": "Colors",
+  "save": "Save",
+  "reset": "Reset",
 
   "login_connection": "Login",
   "login_student_no": "Student N°",
@@ -27,5 +29,8 @@
   "grades_no_grades": "No grades",
   "grades_confirm_disc": "Are you sure you want to log out ?",
 
-  "settings_background_gradient_params": "Gradient background settings"
+  "settings_background_gradient_params": "Gradient background settings",
+  "settings_primary_color_params": "Main color",
+  "settings_no_more_colors": "You can't add more colors.",
+  "settings_min_two_colors": "You have to keep at least two colors."
 }

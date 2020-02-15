@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dbufr_checker/src/models/Grade.dart';
+import 'package:dbufr_checker/src/models/UserSettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,11 +18,13 @@ import 'package:url_launcher/url_launcher.dart';
 const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
 const String LANG_KEY = 'lang';
+const String USER_SETTINGS_KEY = 'user_settings';
 
 const String DB_UFR_URL =
     'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
-const String FILE_NAME = 'grades.json';
+const String GRADES_FILE_NAME = 'grades.json';
 const String STRING_FILE_PATH = "assets/lang";
+const String USER_SETTINGS_NAME = "user_settings.json";
 
 Future<void> clearUserData() async {
   await clearSharedPreferences();
@@ -320,15 +323,31 @@ Future<File> _getLangFile(String langCode) async {
 Future<Map<String, dynamic>> loadLang(String langCode) async {
   String content =
       await rootBundle.loadString('$STRING_FILE_PATH/$langCode.json');
-//  File file = await _getLangFile(langCode);
-//  if(!file.existsSync()) return null;
-//  String content = file.readAsStringSync();
   dynamic json = jsonDecode(content);
   return json;
 }
 
+Future<UserSettings> loadUserSettings() async {
+  final path = await _localPath;
+  File file = File('$path/$USER_SETTINGS_NAME');
+  if (!file.existsSync()) {
+    UserSettings us = UserSettings();
+    saveUserSettings(us);
+    return us;
+  }
+  return UserSettings.fromMap(json.decode(file.readAsStringSync()));
+}
+
+Future<void> saveUserSettings(UserSettings settings) async {
+  final path = await _localPath;
+  File file = File('$path/$USER_SETTINGS_NAME');
+  String jsonSettings = json.encode(settings.asMap);
+  return file.writeAsStringSync(jsonSettings);
+}
+
 // WIDGETS CONSTRUCTOS
 LinearGradient getLinearGradientBg() {
+  print(HSVColor.fromColor(Colors.lightBlue[800]));
   return LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -370,28 +389,6 @@ SnackBar setUpConnectDbUfrSnack(String text) {
   );
 }
 
-//Container getLoadingScreen() {
-//  return Container(
-//      width: double.infinity,
-//      height: double.infinity,
-//      decoration: BoxDecoration(gradient: getLinearGradientBg()),
-//      child: Column(
-//        mainAxisAlignment: MainAxisAlignment.center,
-//        crossAxisAlignment: CrossAxisAlignment.center,
-//        children: <Widget>[
-//          CircularProgressIndicator(),
-//          SizedBox(
-//            height: 60,
-//          ),
-//          Text('{ Loading }',
-//          style: TextStyle(
-//            fontSize: 30,
-//            letterSpacing: 1
-//          ),)
-//        ],
-//      ));
-//}
-
 Container getLoadingScreen(AnimationController parent) {
   return Container(
       width: double.infinity,
@@ -414,4 +411,12 @@ Container getLoadingScreen(AnimationController parent) {
           )
         ],
       ));
+}
+
+
+// COLORS FUNCTIONS
+
+Color colorFromDouble(double c) {
+  assert(c >= 0 && c <= 360);
+  return HSVColor.fromAHSV(1, c, 1, 1).toColor();
 }

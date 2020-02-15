@@ -8,6 +8,8 @@
   "grades": "Notes",
   "settings": "Paramètres",
   "colors": "Couleurs",
+  "save": "Sauvegarder",
+  "reset": "Réinitialiser",
 
   "login_connection": "Connexion",
   "login_student_no": "N° étudiant",
@@ -27,5 +29,8 @@
   "grades_no_grades": "Pas de notes",
   "grades_confirm_disc": "Êtes-vous sûr de vouloir vous déconnecter ?",
 
-  "settings_background_gradient_params": "Dégradé de l'arrière plan"
+  "settings_background_gradient_params": "Dégradé de l'arrière plan",
+  "settings_primary_color_params": "Couleur principale",
+  "settings_no_more_colors": "Vous ne pouvez pas ajouté plus de couleurs.",
+  "settings_min_two_colors": "Vous devez garder au minimum deux couleurs."
 }
