@@ -66,8 +66,6 @@ class _LoginPageState extends State<LoginPage>
               child: langHandler.getCurrentFlag(),
               onPressed: () {
                 if (!_loading) {
-                  print('here');
-
                   setState(() {
                     _loading = true;
                   });

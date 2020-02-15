@@ -24,12 +24,12 @@ class _GradesPageState extends State<GradesPage>
   bool _cantConnect = false;
   bool _refreshing = false;
   bool _loading = true;
-  bool _settingsInit = false;
+  bool _settingsInit = true;
 
   LangHandlerSingleton langHandler;
   AnimationController _animationController;
 
-  UserSettings userSettings;
+  UserSettings userSettings = UserSettings();
 
   @override
   void initState() {
@@ -42,17 +42,25 @@ class _GradesPageState extends State<GradesPage>
         _loading = false;
 
         // Handle on resume
-        WidgetsBinding.instance.addObserver(
-            LifecycleEventHandler(resumeCallBack: () => refresh()));
+        WidgetsBinding.instance
+            .addObserver(LifecycleEventHandler(resumeCallBack: () {
+          refresh();
+          refreshSettings();
+          return null;
+        }));
+
+        // give config from parent
+        CredentialsArgument args = ModalRoute.of(context).settings.arguments;
+
+        loadUserSettings().then((value) {
+          setState(() {
+            userSettings = value;
+            _settingsInit =false;
+          });
+        });
+
       });
     });
-
-//    loadUserSettings().then((value) {
-//      setState(() {
-//        userSettings = value;
-//        _settingsInit = true;
-//      });
-//    } );
   }
 
   @override
@@ -66,13 +74,17 @@ class _GradesPageState extends State<GradesPage>
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        // TODO : when dynamics color replace w/ fist value of linear gradient
-      backgroundColor: Colors.lightBlue[400],
+        backgroundColor: colorFromDouble(userSettings.linearBgColors[0]),
         appBar: _setUpAppBar(),
-        body: !_cantConnect || _loading //|| !_settingsInit
+        body: !_cantConnect || _loading || !_settingsInit
             ? Container(
                 padding: EdgeInsets.only(top: 10),
-                decoration: BoxDecoration(gradient: getLinearGradientBg()),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: getGradientFromTmpColors(
+                            userSettings.linearBgColors),
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter)),
                 child: _isInitialized
                     ? _buildListView(context)
                     : Center(
@@ -84,7 +96,9 @@ class _GradesPageState extends State<GradesPage>
                       ),
               )
             : getLoadingScreen(_animationController),
-        floatingActionButton: _setUpFloatingActionBtn(),
+        floatingActionButton: !_cantConnect || _loading || !_settingsInit
+            ? _setUpFloatingActionBtn()
+            : null,
       ),
     );
   }
@@ -109,9 +123,20 @@ class _GradesPageState extends State<GradesPage>
     return (await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  title: Text(langHandler.getTranslationFor('logout')),
+                  title: Text(
+                    langHandler.getTranslationFor('logout'),
+                    style: TextStyle(
+                        fontFamily: userSettings.fontName,
+                        fontSize: userSettings.titleFontSize,
+                        color: colorFromDouble(userSettings.primaryColor)),
+                  ),
                   content: Text(
-                      langHandler.getTranslationFor('grades_confirm_desc')),
+                    langHandler.getTranslationFor('grades_confirm_desc'),
+                    style: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.subtitlesFontSize,
+                    ),
+                  ),
                   actions: <Widget>[
                     FlatButton(
                       onPressed: () {
@@ -124,9 +149,16 @@ class _GradesPageState extends State<GradesPage>
                         await clearUserData();
                         Navigator.of(context).pushAndRemoveUntil(
                             _createRoute(), (Route<dynamic> route) => false);
+                        return false;
                       },
-                      child: Text(langHandler.getTranslationFor('yes')),
-                    )
+                      child: Text(
+                        langHandler.getTranslationFor('yes'),
+                        style: TextStyle(
+                            fontFamily: userSettings.fontName,
+                            fontSize: userSettings.subtitlesFontSize,
+                            color: colorFromDouble(userSettings.primaryColor)),
+                      ),
+                    ),
                   ],
                 ))) ??
         false;
@@ -136,21 +168,40 @@ class _GradesPageState extends State<GradesPage>
     return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              title: Text(langHandler.getTranslationFor('logout')),
-              content:
-                  Text(langHandler.getTranslationFor('grades_confirm_disc')),
+              title: Text(
+                langHandler.getTranslationFor('logout'),
+                style: TextStyle(
+                    fontFamily: userSettings.fontName,
+                    fontSize: userSettings.titleFontSize,
+                    color: colorFromDouble(userSettings.primaryColor)),
+              ),
+              content: Text(
+                langHandler.getTranslationFor('grades_confirm_disc'),
+                style: TextStyle(
+                  fontFamily: userSettings.fontName,
+                  fontSize: userSettings.subtitlesFontSize,
+                ),
+              ),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop(false);
                   },
-                  child: Text(langHandler.getTranslationFor('no')),
+                  child: Text(langHandler.getTranslationFor('no'),
+                      style: TextStyle(
+                          fontFamily: userSettings.fontName,
+                          fontSize: userSettings.subtitlesFontSize,
+                          color: colorFromDouble(userSettings.primaryColor))),
                 ),
                 FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop(true);
                   },
-                  child: Text(langHandler.getTranslationFor('yes')),
+                  child: Text(langHandler.getTranslationFor('yes'),
+                      style: TextStyle(
+                          fontFamily: userSettings.fontName,
+                          fontSize: userSettings.subtitlesFontSize,
+                          color: colorFromDouble(userSettings.primaryColor))),
                 )
               ],
             )));
@@ -158,13 +209,18 @@ class _GradesPageState extends State<GradesPage>
 
   AppBar _setUpAppBar() {
     return AppBar(
-      title:
-          !_loading ? Text(langHandler.getTranslationFor('grades'),
-          style: TextStyle(fontFamily: 'montserrat'),) : Text(''),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(25)
-      ),
-
+      title: !_loading
+          ? Text(
+              langHandler.getTranslationFor('grades'),
+              style: TextStyle(
+                fontFamily: userSettings.fontName,
+                fontSize: userSettings.titleFontSize + 2,
+//              color:colorFromDouble(userSettings.primaryColor)
+              ),
+            )
+          : Text(''),
+      backgroundColor: colorFromDouble(userSettings.primaryColor),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(right: 10),
@@ -256,19 +312,24 @@ class _GradesPageState extends State<GradesPage>
                         title: Text(
                           '${ues[i].desc}',
                           style: TextStyle(
-                            color: Colors.blue,
-                            letterSpacing: 1,
-                          ),
+                              fontFamily: userSettings.fontName,
+                              fontSize: userSettings.titleFontSize,
+                              color:
+                                  colorFromDouble(userSettings.primaryColor)),
                           textAlign: TextAlign.center,
                         ),
                         // SUBTITLE
                         subtitle: Container(
                           padding: EdgeInsets.only(top: 5, left: 8),
                           child: Text(
-                            '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
-                                truncMonthToFull(ues[i].month),
-                            textAlign: TextAlign.center,
-                          ),
+                              '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
+                                  truncMonthToFull(ues[i].month),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: userSettings.fontName,
+                                fontSize: userSettings.subtitlesFontSize,
+//                                color:colorFromDouble(userSettings.primaryColor)),
+                              )),
                         ),
 
                         // TILE CONTENT
@@ -295,8 +356,10 @@ class _GradesPageState extends State<GradesPage>
                           Text(
                             '${ues[i].desc}',
                             style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.blue,
+                                fontFamily: userSettings.fontName,
+                                fontSize: userSettings.titleFontSize,
+                                color:
+                                    colorFromDouble(userSettings.primaryColor),
                                 letterSpacing: 1),
                             textAlign: TextAlign.center,
                           ),
@@ -305,6 +368,11 @@ class _GradesPageState extends State<GradesPage>
                             child: Text(
                               '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ${truncMonthToFull(ues[i].month)}',
                               overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: userSettings.fontName,
+                                fontSize: userSettings.subtitlesFontSize,
+//                                color:colorFromDouble(userSettings.primaryColor)
+                              ),
                             ),
                           )
                         ],
@@ -322,8 +390,12 @@ class _GradesPageState extends State<GradesPage>
     List<Grade> grades = ues[i].grades;
 
     if (grades.length == 0) {
-      gradesWidgets
-          .add(Text(langHandler.getTranslationFor('grades_no_grades')));
+      gradesWidgets.add(Text(
+        langHandler.getTranslationFor('grades_no_grades'),
+        style: TextStyle(
+            fontSize: userSettings.subtitlesFontSize,
+            fontFamily: userSettings.fontName),
+      ));
     } else {
       ues[i].grades.forEach((Grade g) {
         gradesWidgets.add(Row(
@@ -339,13 +411,18 @@ class _GradesPageState extends State<GradesPage>
               child: RichText(
                 text: TextSpan(
                   style: TextStyle(
-                      fontSize: 13,
-                      color: g.newGrade ? Colors.red : Colors.black),
+                      fontSize: userSettings.subtitlesFontSize,
+                      color: g.newGrade ? Colors.red : Colors.black,
+                      fontFamily: userSettings.fontName),
                   children: <TextSpan>[
                     TextSpan(
                         text: '${g.grade}/${g.max}',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15)),
+                            fontSize: userSettings.subtitlesFontSize,
+                            fontWeight: FontWeight.bold,
+                            color: colorFromDouble(
+                              userSettings.primaryColor,
+                            ))),
                     TextSpan(text: ' ${g.desc}')
                   ],
                 ),
@@ -375,6 +452,9 @@ class _GradesPageState extends State<GradesPage>
                   label: !_loading
                       ? langHandler.getTranslationFor('logout')
                       : null,
+                  labelStyle: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.subtitlesFontSize),
                   onTap: () async {
                     if (_loading) return;
                     bool doDisconnectUser = await doDisconnect();
@@ -385,17 +465,26 @@ class _GradesPageState extends State<GradesPage>
                     }
                   }),
               SpeedDialChild(
-                child: Icon(Icons.settings),
-                label: !_loading ? langHandler.getTranslationFor('settings'): '',
-                onTap: () {
-                  Navigator.of(context).pushNamed('/settings');
-                }
-              ),
+                  child: Icon(Icons.settings),
+                  label: !_loading
+                      ? langHandler.getTranslationFor('settings')
+                      : '',
+                  labelStyle: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.subtitlesFontSize),
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed('/settings')
+                        .then((value) => refreshSettings());
+                  }),
               SpeedDialChild(
                   child: Icon(Icons.refresh),
                   label: !_loading
                       ? langHandler.getTranslationFor('refresh')
                       : null,
+                  labelStyle: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.subtitlesFontSize),
                   onTap: () {
                     if (_loading) return;
                     refresh();
@@ -405,6 +494,9 @@ class _GradesPageState extends State<GradesPage>
                   label: !_loading
                       ? langHandler.getTranslationFor('language')
                       : null,
+                  labelStyle: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.subtitlesFontSize),
                   onTap: () {
                     if (_loading) return;
                     setState(() {
@@ -487,55 +579,12 @@ class _GradesPageState extends State<GradesPage>
     });
   }
 
-  Widget _setUpCantConnect() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: getLinearGradientBg(),
-      ),
-      padding: EdgeInsets.all(20),
-      child: Center(
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15.0),
-              color: Colors.white,
-            ),
-            child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Wrap(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          langHandler.getTranslationFor('error'),
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Divider(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          langHandler.getTranslationFor('login_connect_error'),
-                          style: TextStyle(
-                            fontSize: 17,
-                          ),
-                        ),
-                        OutlineButton(
-                          onPressed: () {
-                            refresh();
-                          },
-                        ),
-                      ],
-                    )
-                  ],
-                ))),
-      ),
-    );
+  Future<void> refreshSettings() async {
+    loadUserSettings().then((value) {
+      setState(() {
+        userSettings = value;
+      });
+    });
   }
 
   void _showSnackBarSuccessRefresh() {

@@ -16,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage>
   bool _loadingSettings = true;
   bool _saving = false;
   bool _loadingFonts = true;
+
   // Buffer values
   List<double> tmpLinear;
   double tmpPrimaryColor;
@@ -46,26 +47,26 @@ class _SettingsPageState extends State<SettingsPage>
     loadUserSettings().then((userSettings) {
       setState(() {
         this.userSettings = userSettings;
-        tmpLinear = List.from(userSettings.asMap[LINEAR_GRADIENT_NAME]);
-        tmpPrimaryColor = userSettings.asMap[PRIMARY_COLOR_NAME];
+        tmpLinear = List.from(userSettings.linearBgColors);
+        tmpPrimaryColor = userSettings.primaryColor;
         _tmpTitleFontSize = userSettings.titleFontSize;
         _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
+        _tmpFontName = userSettings.fontName;
         _loadingSettings = false;
+
       });
     });
 
     getFontPaths(context).then((paths) {
-        setState(() {
-          availableFonts = getFontsNameFromPaths(paths);
-          _loadingFonts = false;
-        });
+      setState(() {
+        availableFonts = getFontsNameFromPaths(paths);
+        _loadingFonts = false;
+      });
     });
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     return !_loadingLang && !_loadingSettings && !_loadingFonts
         ? Scaffold(
             appBar: _setUpAppbar(),
@@ -89,9 +90,11 @@ class _SettingsPageState extends State<SettingsPage>
   List<Widget> _setUpLinearGradientParameters() {
     List<Widget> gradientParams = new List<Widget>();
 
-    gradientParams.add(Text(
-        langHandler.getTranslationFor('settings_background_gradient_params'),
-        style:TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName)), );
+    gradientParams.add(
+      Text(langHandler.getTranslationFor('settings_background_gradient_params'),
+          style:
+              TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName)),
+    );
 
     gradientParams += _formatGradientParamsSliders();
 
@@ -117,7 +120,7 @@ class _SettingsPageState extends State<SettingsPage>
               Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
                   langHandler.getTranslationFor('settings_no_more_colors')));
             } else {
-              tmpLinear.add(tmpLinear[tmpLinear.length-1]);
+              tmpLinear.add(tmpLinear[tmpLinear.length - 1]);
             }
           });
         },
@@ -139,14 +142,11 @@ class _SettingsPageState extends State<SettingsPage>
     gradientParams.add(SizedBox(
       height: 20,
     ));
-    gradientParams.add(
-        Text(langHandler.getTranslationFor('settings_primary_color_params'),
-        style: TextStyle(
-          fontSize: _tmpTitleFontSize,
-          fontFamily: _tmpFontName
-        ),));
+    gradientParams.add(Text(
+      langHandler.getTranslationFor('settings_primary_color_params'),
+      style: TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName),
+    ));
     gradientParams += _setUpPrimaryColorParameters();
-
 
     return gradientParams;
   }
@@ -240,8 +240,10 @@ class _SettingsPageState extends State<SettingsPage>
 
   AppBar _setUpAppbar() {
     return AppBar(
-      title: Text(langHandler.getTranslationFor('settings'),
-      style: TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName),),
+      title: Text(
+        langHandler.getTranslationFor('settings'),
+        style: TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName),
+      ),
       backgroundColor: colorFromDouble(tmpPrimaryColor),
       centerTitle: true,
       elevation: 10,
@@ -257,26 +259,23 @@ class _SettingsPageState extends State<SettingsPage>
           Card(
             color: Colors.white,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20))
-            ),
+                borderRadius: BorderRadius.all(Radius.circular(20))),
             child: ExpansionTile(
               title: Text(langHandler.getTranslationFor('colors'),
-                  style:TextStyle(fontSize: _tmpTitleFontSize,
+                  style: TextStyle(
+                      fontSize: _tmpTitleFontSize,
                       color: colorFromDouble(tmpPrimaryColor),
-                  fontFamily: _tmpFontName)),
+                      fontFamily: _tmpFontName)),
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(3),
-
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(20)
-                  ),
-                  child:Card(
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Card(
 //                  elevation: 30,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Container(
                       padding: EdgeInsets.all(20),
                       child: Column(
@@ -291,26 +290,26 @@ class _SettingsPageState extends State<SettingsPage>
           Card(
             color: Colors.white,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20))
-            ),
+                borderRadius: BorderRadius.all(Radius.circular(20))),
             child: ExpansionTile(
-              title: Text(langHandler.getTranslationFor('text'),
-                  style:TextStyle(fontSize: _tmpTitleFontSize,
-                      color: colorFromDouble(tmpPrimaryColor),
-                      fontFamily: _tmpFontName, letterSpacing: 1),),
+              title: Text(
+                langHandler.getTranslationFor('text'),
+                style: TextStyle(
+                    fontSize: _tmpTitleFontSize,
+                    color: colorFromDouble(tmpPrimaryColor),
+                    fontFamily: _tmpFontName,
+                    letterSpacing: 1),
+              ),
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(3),
-
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(20)
-                  ),
-                  child:Card(
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Card(
 //                  elevation: 30,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))
-                    ),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
                     child: Container(
                       padding: EdgeInsets.all(20),
                       child: Column(
@@ -325,97 +324,119 @@ class _SettingsPageState extends State<SettingsPage>
         ]);
   }
 
-
   List<Widget> _setUpTextParameters() {
     List<Widget> txtParams = new List<Widget>();
-    txtParams.add(
-        Text(langHandler.getTranslationFor('settings_title_font_size'),
-          style: TextStyle(
-              fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName
-          ),)
-    );
-    txtParams.add(
-      Slider(
-        value: _tmpTitleFontSize,
-        min: 15,
-        max: 25,
-        divisions: 10,
-        label: _tmpTitleFontSize.toString(),
-        onChanged: (v) {
-          setState(() {
-            _tmpTitleFontSize = v;
-          });
-        },
-      )
-    );
+    txtParams.add(Text(
+      langHandler.getTranslationFor('settings_title_font_size'),
+      style: TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName),
+    ));
+    txtParams.add(Slider(
+      value: _tmpTitleFontSize,
+      min: 15,
+      max: 25,
+      divisions: 10,
+      label: _tmpTitleFontSize.toString(),
+      onChanged: (v) {
+        setState(() {
+          _tmpTitleFontSize = v;
+        });
+      },
+    ));
 
-    txtParams.add(
-        Text(langHandler.getTranslationFor('settings_subtitle_font_size'),
-          style: TextStyle(
-              fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName
-          ),)
-    );
-    txtParams.add(
-        Slider(
-          value: _tmpSubtitleFontSize,
-          min: 10,
-          max: 20,
-          divisions: 10,
-          label: _tmpSubtitleFontSize.toString(),
-          onChanged: (v) {
-            setState(() {
-              _tmpSubtitleFontSize= v;
-            });
-          },
-        )
-    );
+    txtParams.add(Text(
+      langHandler.getTranslationFor('settings_subtitle_font_size'),
+      style:
+          TextStyle(fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName),
+    ));
+    txtParams.add(Slider(
+      value: _tmpSubtitleFontSize,
+      min: 10,
+      max: 20,
+      divisions: 10,
+      label: _tmpSubtitleFontSize.toString(),
+      onChanged: (v) {
+        setState(() {
+          _tmpSubtitleFontSize = v;
+        });
+      },
+    ));
 
-    txtParams.add(
-      DropdownButton(
+    print('${userSettings.asMap} eeeeee');
+    txtParams.add(DropdownButton(
         value: _tmpFontName,
         onChanged: (String v) {
+          print('tmt : $_tmpFontName');
           setState(() {
             _tmpFontName = v;
           });
         },
+
         items: availableFonts.map((e) {
           return DropdownMenuItem(
             value: e,
-            child: Text('${e[0].toUpperCase()}${e.substring(1)}',
-            style: TextStyle(
-              fontFamily: '$e',
-              color: colorFromDouble(tmpPrimaryColor)
-            ),),
+            child: Text(
+              '${e[0].toUpperCase()}${e.substring(1)}',
+              style: TextStyle(
+                  fontFamily: '$e', color: colorFromDouble(tmpPrimaryColor)),
+            ),
           );
-        }).toList())
-    );
+        }).toList()));
 
     return txtParams;
   }
 
   Widget _setUpBottomAppBar() {
     return BottomNavigationBar(
-      backgroundColor: colorFromDouble(tmpLinear[tmpLinear.length-1]),
+      backgroundColor: colorFromDouble(tmpLinear[tmpLinear.length - 1]),
       selectedLabelStyle: TextStyle(color: Colors.black, fontSize: 14),
       unselectedFontSize: 14,
-
       onTap: (i) {
-        if(i==0){
+        if (i == 0) {
+              setState(() {
+                userSettings = UserSettings().copy();
+                tmpLinear = List.from(userSettings.linearBgColors);
+                tmpPrimaryColor = userSettings.primaryColor;
+                _tmpFontName = userSettings.fontName;
+                _tmpTitleFontSize = userSettings.titleFontSize;
+                _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
+              });
+        } else if (i == 1) {
           setState(() {
-            tmpLinear = List.from(userSettings.asMap[LINEAR_GRADIENT_NAME]);
-            tmpPrimaryColor = userSettings.asMap[PRIMARY_COLOR_NAME];
+            tmpLinear = List.from(userSettings.linearBgColors);
+            tmpPrimaryColor = userSettings.primaryColor;
+            _tmpFontName = userSettings.fontName;
+            _tmpTitleFontSize = userSettings.titleFontSize;
+            _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
           });
-        }else if(i==1){
+        } else if(i == 2){
           setState(() {
             userSettings.linearBgColors = tmpLinear;
             userSettings.primaryColor = tmpPrimaryColor;
+            userSettings.fontName = _tmpFontName;
+            userSettings.subtitlesFontSize = _tmpSubtitleFontSize;
+            userSettings.titleFontSize = _tmpTitleFontSize;
           });
           saveUserSettings(userSettings);
-
         }
       },
-
       items: [
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.refresh,
+            color: Colors.black,
+          ),
+          activeIcon: Icon(
+            Icons.refresh,
+            color: Colors.black,
+          ),
+          title: Text(
+            langHandler.getTranslationFor("settings_reset_origin"),
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: _tmpSubtitleFontSize,
+                fontFamily: _tmpFontName),
+          ),
+        ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.undo,
@@ -423,7 +444,10 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           title: Text(
             langHandler.getTranslationFor("reset"),
-            style: TextStyle(color: Colors.black,  fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName),
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: _tmpSubtitleFontSize,
+                fontFamily: _tmpFontName),
           ),
           activeIcon: Icon(
             Icons.undo,
@@ -441,9 +465,13 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           title: Text(
             langHandler.getTranslationFor("save"),
-            style: TextStyle(color: Colors.black, fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName),
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: _tmpSubtitleFontSize,
+                fontFamily: _tmpFontName),
           ),
-        )
+        ),
+
       ],
     );
   }

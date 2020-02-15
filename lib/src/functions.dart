@@ -304,9 +304,9 @@ Future<List<TeachingUnit>> loadGrades() async {
   List<dynamic> json = jsonDecode(content);
   List<TeachingUnit> teachingUnits = new List<TeachingUnit>();
 
-    json.forEach((o) {
-      teachingUnits.add(TeachingUnit.fromJson(o));
-    });
+  json.forEach((o) {
+    teachingUnits.add(TeachingUnit.fromJson(o));
+  });
   return teachingUnits;
 }
 
@@ -331,10 +331,12 @@ Future<UserSettings> loadUserSettings() async {
   final path = await _localPath;
   File file = File('$path/$USER_SETTINGS_NAME');
   if (!file.existsSync()) {
+    print('tf');
     UserSettings us = UserSettings();
     saveUserSettings(us);
     return us;
   }
+  print(file.readAsStringSync());
   return UserSettings.fromMap(json.decode(file.readAsStringSync()));
 }
 
@@ -342,14 +344,16 @@ Future<void> saveUserSettings(UserSettings settings) async {
   final path = await _localPath;
   File file = File('$path/$USER_SETTINGS_NAME');
   String jsonSettings = json.encode(settings.asMap);
-  return file.writeAsStringSync(jsonSettings);
+  print(settings.fontName);
+  await file.writeAsString(jsonSettings);
 }
 
-Future<List<String>>  getFontPaths(context) async{
+Future<List<String>> getFontPaths(context) async {
   // To get paths you need these 2 lines
-  final manifestContent = await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+  final manifestContent =
+      await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
   final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-  
+
   return manifestMap.keys
       .where((String key) => key.contains('assets/fonts/'))
       .where((String key) => key.contains('.ttf'))
@@ -357,7 +361,9 @@ Future<List<String>>  getFontPaths(context) async{
 }
 
 List<String> getFontsNameFromPaths(List<String> paths) {
-  return paths.map((e) => e.substring(e.lastIndexOf('/')+1, e.lastIndexOf('.'))).toList();
+  return paths
+      .map((e) => e.substring(e.lastIndexOf('/') + 1, e.lastIndexOf('.')))
+      .toList();
 }
 
 // WIDGETS CONSTRUCTOS
@@ -414,6 +420,7 @@ Container getLoadingScreen(AnimationController parent) {
         children: <Widget>[
           SpinKitPouringHourglass(
             color: Colors.black,
+//          TODO : FIX ISSUE WITH TIMER
 //            controller: parent,
           ),
           SizedBox(
@@ -428,22 +435,20 @@ Container getLoadingScreen(AnimationController parent) {
 }
 
 Text formatTitle(String text, UserSettings us, [bool colored = false]) {
-  return Text(text, style:
-  TextStyle(
-    fontSize: us.asMap[TITLE_FONT_SIZE],
-    fontFamily: us.asMap[FONT_NAME],
-    color: colored ? us.asMap[PRIMARY_COLOR_NAME] : null
-  ));
+  return Text(text,
+      style: TextStyle(
+          fontSize: us.asMap[TITLE_FONT_SIZE],
+          fontFamily: us.asMap[FONT_NAME],
+          color: colored ? us.asMap[PRIMARY_COLOR_NAME] : null));
 }
 
 Text formatSubtitle(String text, UserSettings us) {
-  return Text(text, style:
-  TextStyle(
-    fontSize: us.asMap[SUBTITLE_FONT_SIZE],
-    fontFamily: us.asMap[FONT_NAME],
-  ));
+  return Text(text,
+      style: TextStyle(
+        fontSize: us.asMap[SUBTITLE_FONT_SIZE],
+        fontFamily: us.asMap[FONT_NAME],
+      ));
 }
-
 
 // COLORS FUNCTIONS
 
@@ -451,3 +456,5 @@ Color colorFromDouble(double c) {
   assert(c >= 0 && c <= 360);
   return HSVColor.fromAHSV(1, c, 1, 1).toColor();
 }
+List<Color> getGradientFromTmpColors(List<double> colors) =>
+    colors.map((e) => HSVColor.fromAHSV(1, e, 1, 1).toColor()).toList();
