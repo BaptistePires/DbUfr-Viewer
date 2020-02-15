@@ -78,6 +78,31 @@ flutter:
     - family: Montserrat
       fonts:
         - asset: assets/fonts/montserrat.ttf
+
+    - family: Opensans
+      fonts:
+        - asset: assets/fonts/opensans.ttf
+
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/roboto.ttf
+
+    - family: Tomorrow
+      fonts:
+        - asset: assets/fonts/tomorrow.ttf
+
+    - family: Caveat
+      fonts:
+        - asset: assets/fonts/caveat.ttf
+
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/raleway.ttf
+
+    - family: ShadowsintoLight
+      fonts:
+        - asset: assets/fonts/shadowsintolight.ttf
+
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

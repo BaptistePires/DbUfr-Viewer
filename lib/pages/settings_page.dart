@@ -15,13 +15,15 @@ class _SettingsPageState extends State<SettingsPage>
   bool _loadingLang = true;
   bool _loadingSettings = true;
   bool _saving = false;
-
+  bool _loadingFonts = true;
   // Buffer values
   List<double> tmpLinear;
   double tmpPrimaryColor;
   double _tmpTitleFontSize;
   double _tmpSubtitleFontSize;
+  String _tmpFontName;
 
+  List<String> availableFonts;
   LangHandlerSingleton langHandler;
   AnimationController _animationController;
 
@@ -40,6 +42,7 @@ class _SettingsPageState extends State<SettingsPage>
         _loadingLang = false;
       });
     }));
+
     loadUserSettings().then((userSettings) {
       setState(() {
         this.userSettings = userSettings;
@@ -47,16 +50,23 @@ class _SettingsPageState extends State<SettingsPage>
         tmpPrimaryColor = userSettings.asMap[PRIMARY_COLOR_NAME];
         _tmpTitleFontSize = userSettings.titleFontSize;
         _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
-        print(userSettings.subtitlesFontSize);
         _loadingSettings = false;
       });
     });
+
+    getFontPaths(context).then((paths) {
+        setState(() {
+          availableFonts = getFontsNameFromPaths(paths);
+          _loadingFonts = false;
+        });
+    });
+
   }
 
   @override
   Widget build(BuildContext context) {
-//    print('${userSettings.asMap[LINEAR_GRADIENT_NAME]} : $_loadingSettings');
-    return !_loadingLang && !_loadingSettings
+
+    return !_loadingLang && !_loadingSettings && !_loadingFonts
         ? Scaffold(
             appBar: _setUpAppbar(),
             backgroundColor: colorFromDouble(userSettings.linearBgColors[0]),
@@ -81,7 +91,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     gradientParams.add(Text(
         langHandler.getTranslationFor('settings_background_gradient_params'),
-        style:TextStyle(fontSize: _tmpTitleFontSize)), );
+        style:TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName)), );
 
     gradientParams += _formatGradientParamsSliders();
 
@@ -132,7 +142,8 @@ class _SettingsPageState extends State<SettingsPage>
     gradientParams.add(
         Text(langHandler.getTranslationFor('settings_primary_color_params'),
         style: TextStyle(
-          fontSize: _tmpTitleFontSize
+          fontSize: _tmpTitleFontSize,
+          fontFamily: _tmpFontName
         ),));
     gradientParams += _setUpPrimaryColorParameters();
 
@@ -230,39 +241,11 @@ class _SettingsPageState extends State<SettingsPage>
   AppBar _setUpAppbar() {
     return AppBar(
       title: Text(langHandler.getTranslationFor('settings'),
-      style: TextStyle(fontSize: _tmpTitleFontSize),),
+      style: TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName),),
       backgroundColor: colorFromDouble(tmpPrimaryColor),
       centerTitle: true,
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    );
-  }
-
-  Widget _setUpSaveButton() {
-    return OutlineButton(
-      child: !_saving
-          ? Text(langHandler.getTranslationFor("save"))
-          : Container(
-              margin: EdgeInsets.all(5),
-              child: Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
-                widthFactor: 1,
-              ),
-            ),
-      onPressed: () {
-        if (_saving) return;
-        setState(() {
-          _saving = true;
-          userSettings.linearBgColors = tmpLinear;
-        });
-        saveUserSettings(userSettings).then((value) {
-          setState(() {
-            _saving = false;
-          });
-        });
-      },
     );
   }
 
@@ -279,7 +262,8 @@ class _SettingsPageState extends State<SettingsPage>
             child: ExpansionTile(
               title: Text(langHandler.getTranslationFor('colors'),
                   style:TextStyle(fontSize: _tmpTitleFontSize,
-                      color: colorFromDouble(tmpPrimaryColor))),
+                      color: colorFromDouble(tmpPrimaryColor),
+                  fontFamily: _tmpFontName)),
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(3),
@@ -312,7 +296,8 @@ class _SettingsPageState extends State<SettingsPage>
             child: ExpansionTile(
               title: Text(langHandler.getTranslationFor('text'),
                   style:TextStyle(fontSize: _tmpTitleFontSize,
-                      color: colorFromDouble(tmpPrimaryColor))),
+                      color: colorFromDouble(tmpPrimaryColor),
+                      fontFamily: _tmpFontName, letterSpacing: 1),),
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(3),
@@ -346,7 +331,7 @@ class _SettingsPageState extends State<SettingsPage>
     txtParams.add(
         Text(langHandler.getTranslationFor('settings_title_font_size'),
           style: TextStyle(
-              fontSize: _tmpTitleFontSize
+              fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName
           ),)
     );
     txtParams.add(
@@ -367,7 +352,7 @@ class _SettingsPageState extends State<SettingsPage>
     txtParams.add(
         Text(langHandler.getTranslationFor('settings_subtitle_font_size'),
           style: TextStyle(
-              fontSize: _tmpSubtitleFontSize
+              fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName
           ),)
     );
     txtParams.add(
@@ -383,6 +368,26 @@ class _SettingsPageState extends State<SettingsPage>
             });
           },
         )
+    );
+
+    txtParams.add(
+      DropdownButton(
+        value: _tmpFontName,
+        onChanged: (String v) {
+          setState(() {
+            _tmpFontName = v;
+          });
+        },
+        items: availableFonts.map((e) {
+          return DropdownMenuItem(
+            value: e,
+            child: Text('${e[0].toUpperCase()}${e.substring(1)}',
+            style: TextStyle(
+              fontFamily: '$e',
+              color: colorFromDouble(tmpPrimaryColor)
+            ),),
+          );
+        }).toList())
     );
 
     return txtParams;
@@ -405,8 +410,6 @@ class _SettingsPageState extends State<SettingsPage>
             userSettings.linearBgColors = tmpLinear;
             userSettings.primaryColor = tmpPrimaryColor;
           });
-
-
           saveUserSettings(userSettings);
 
         }
@@ -420,7 +423,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           title: Text(
             langHandler.getTranslationFor("reset"),
-            style: TextStyle(color: Colors.black, fontSize: 14),
+            style: TextStyle(color: Colors.black,  fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName),
           ),
           activeIcon: Icon(
             Icons.undo,
@@ -438,7 +441,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           title: Text(
             langHandler.getTranslationFor("save"),
-            style: TextStyle(color: Colors.black, fontSize: 14),
+            style: TextStyle(color: Colors.black, fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName),
           ),
         )
       ],

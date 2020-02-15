@@ -14,12 +14,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        fontFamily: 'Montserrat',
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/settings',
+      initialRoute: '/',
       routes: {
-//        '/': (context) => Scaffold(body: HomePage()),
+        '/': (context) => Scaffold(body: HomePage()),
         '/login': (context) => Scaffold(
               body: LoginPage(),
             ),

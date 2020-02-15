@@ -345,6 +345,21 @@ Future<void> saveUserSettings(UserSettings settings) async {
   return file.writeAsStringSync(jsonSettings);
 }
 
+Future<List<String>>  getFontPaths(context) async{
+  // To get paths you need these 2 lines
+  final manifestContent = await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+  final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+  
+  return manifestMap.keys
+      .where((String key) => key.contains('assets/fonts/'))
+      .where((String key) => key.contains('.ttf'))
+      .toList();
+}
+
+List<String> getFontsNameFromPaths(List<String> paths) {
+  return paths.map((e) => e.substring(e.lastIndexOf('/')+1, e.lastIndexOf('.'))).toList();
+}
+
 // WIDGETS CONSTRUCTOS
 LinearGradient getLinearGradientBg() {
   print(HSVColor.fromColor(Colors.lightBlue[800]));
@@ -411,6 +426,23 @@ Container getLoadingScreen(AnimationController parent) {
           )
         ],
       ));
+}
+
+Text formatTitle(String text, UserSettings us, [bool colored = false]) {
+  return Text(text, style:
+  TextStyle(
+    fontSize: us.asMap[TITLE_FONT_SIZE],
+    fontFamily: us.asMap[FONT_NAME],
+    color: colored ? us.asMap[PRIMARY_COLOR_NAME] : null
+  ));
+}
+
+Text formatSubtitle(String text, UserSettings us) {
+  return Text(text, style:
+  TextStyle(
+    fontSize: us.asMap[SUBTITLE_FONT_SIZE],
+    fontFamily: us.asMap[FONT_NAME],
+  ));
 }
 
 

@@ -4,7 +4,9 @@ const String LINEAR_GRADIENT_NAME = 'linearBgColors';
 const String PRIMARY_COLOR_NAME = 'primaryColor';
 const String TITLE_FONT_SIZE = 'titleFontSize';
 const String SUBTITLE_FONT_SIZE = 'subtitleFontSize';
+const String FONT_NAME = 'fontName';
 const List<double> DEFAULT_GRADIENT = [195, 202];
+const String DEFAULT_FONT_NAME = 'montserrat';
 
 class UserSettings{
 
@@ -24,15 +26,18 @@ class UserSettings{
   /// [subtitleFontSize] Font size for subtitles and texts
   double subtitlesFontSize;
 
+  String fontName;
+
   UserSettings({this.linearBgColors = DEFAULT_GRADIENT, this.primaryColor = 110,
-  this.titleFontSize = 20, this.subtitlesFontSize = 10});
+  this.titleFontSize = 20, this.subtitlesFontSize = 10, this.fontName = DEFAULT_FONT_NAME});
 
   Map<String, dynamic> get asMap{
     return {
       LINEAR_GRADIENT_NAME: linearBgColors,
       PRIMARY_COLOR_NAME: primaryColor,
       TITLE_FONT_SIZE: titleFontSize,
-      SUBTITLE_FONT_SIZE: subtitlesFontSize
+      SUBTITLE_FONT_SIZE: subtitlesFontSize,
+      FONT_NAME: fontName
     };
   }
 
@@ -41,7 +46,8 @@ class UserSettings{
       linearBgColors:mappedSettings[LINEAR_GRADIENT_NAME].cast<double>(),
     primaryColor:mappedSettings[PRIMARY_COLOR_NAME],
     titleFontSize:mappedSettings[TITLE_FONT_SIZE],
-    subtitlesFontSize:mappedSettings[SUBTITLE_FONT_SIZE]);
+    subtitlesFontSize:mappedSettings[SUBTITLE_FONT_SIZE],
+    fontName: mappedSettings[FONT_NAME]);
   }
 
   void setLinearColorById(int id, double v){
