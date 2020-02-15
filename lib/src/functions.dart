@@ -331,12 +331,10 @@ Future<UserSettings> loadUserSettings() async {
   final path = await _localPath;
   File file = File('$path/$USER_SETTINGS_NAME');
   if (!file.existsSync()) {
-    print('tf');
     UserSettings us = UserSettings();
     saveUserSettings(us);
     return us;
   }
-  print(file.readAsStringSync());
   return UserSettings.fromMap(json.decode(file.readAsStringSync()));
 }
 
@@ -344,7 +342,6 @@ Future<void> saveUserSettings(UserSettings settings) async {
   final path = await _localPath;
   File file = File('$path/$USER_SETTINGS_NAME');
   String jsonSettings = json.encode(settings.asMap);
-  print(settings.fontName);
   await file.writeAsString(jsonSettings);
 }
 

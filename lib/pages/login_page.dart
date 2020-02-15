@@ -149,8 +149,8 @@ class _LoginPageState extends State<LoginPage>
     if (logged) {
       Map<String, String> credentials = await getCredentials();
 
-      CredentialsArgument args = CredentialsArgument(
-          credentials[STUDENT_NO_KEY], credentials[PASSWORD_KEY]);
+      UserArgsBundle args = UserArgsBundle(
+          credentials[STUDENT_NO_KEY], credentials[PASSWORD_KEY], userSettings);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
           '/grades', (Route<dynamic> route) => false,
@@ -201,7 +201,8 @@ class _LoginPageState extends State<LoginPage>
       }
 
       // Go to next route and delete this one
-      CredentialsArgument args = new CredentialsArgument(studentNo, password,
+      UserArgsBundle args = new UserArgsBundle(
+          studentNo, password, userSettings,
           htmlGrades: response.body);
       Navigator.pushNamedAndRemoveUntil(
           context, '/grades', (Route<dynamic> route) => false,

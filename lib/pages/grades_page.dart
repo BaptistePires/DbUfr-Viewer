@@ -49,14 +49,10 @@ class _GradesPageState extends State<GradesPage>
           return null;
         }));
 
+        UserArgsBundle args = ModalRoute.of(context).settings.arguments;
         // give config from parent
-        CredentialsArgument args = ModalRoute.of(context).settings.arguments;
-
-        loadUserSettings().then((value) {
-          setState(() {
-            userSettings = value;
-            _settingsInit = false;
-          });
+        setState(() {
+          userSettings = args.userSettings;
         });
       });
     });
@@ -241,7 +237,7 @@ class _GradesPageState extends State<GradesPage>
   }
 
   void setup() {
-    CredentialsArgument args = ModalRoute.of(context).settings.arguments;
+    UserArgsBundle args = ModalRoute.of(context).settings.arguments;
 
     // If the user is not already logged in
     if (args.htmlGrades != null) {
@@ -440,14 +436,15 @@ class _GradesPageState extends State<GradesPage>
   Widget _setUpFloatingActionBtn() {
     return !_refreshing
         ? SpeedDial(
-//      child: Icon(Icons.add),
             animatedIcon: AnimatedIcons.menu_close,
             animationSpeed: 300,
             closeManually: true,
             curve: Curves.fastOutSlowIn,
+            backgroundColor: colorFromDouble(userSettings.primaryColor),
             children: [
               SpeedDialChild(
                   child: Icon(Icons.power_settings_new),
+                  backgroundColor: colorFromDouble(userSettings.primaryColor),
                   label: !_loading
                       ? langHandler.getTranslationFor('logout')
                       : null,
@@ -465,6 +462,7 @@ class _GradesPageState extends State<GradesPage>
                   }),
               SpeedDialChild(
                   child: Icon(Icons.settings),
+                  backgroundColor: colorFromDouble(userSettings.primaryColor),
                   label: !_loading
                       ? langHandler.getTranslationFor('settings')
                       : '',
@@ -474,10 +472,11 @@ class _GradesPageState extends State<GradesPage>
                   onTap: () {
                     Navigator.of(context)
                         .pushNamed('/settings')
-                        .then((value) => refreshSettings());
+                        .then((o) => refreshSettings());
                   }),
               SpeedDialChild(
                   child: Icon(Icons.refresh),
+                  backgroundColor: colorFromDouble(userSettings.primaryColor),
                   label: !_loading
                       ? langHandler.getTranslationFor('refresh')
                       : null,
@@ -525,7 +524,7 @@ class _GradesPageState extends State<GradesPage>
     Map<String, String> credentials = await getCredentials();
 
     if (credentials['student_no'] == null || credentials['password'] == null) {
-      CredentialsArgument args = ModalRoute.of(context).settings.arguments;
+      UserArgsBundle args = ModalRoute.of(context).settings.arguments;
       credentials = {
         STUDENT_NO_KEY: args.studentNo,
         PASSWORD_KEY: args.password
