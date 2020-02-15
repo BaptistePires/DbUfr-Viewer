@@ -189,8 +189,8 @@ class _LoginPageState extends State<LoginPage>
         }
       });
       if (_credentialsError) {
-        Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-            langHandler.getTranslationFor('login_credentials_error')));
+        Scaffold.of(context).showSnackBar(setUpSnackBar(
+            langHandler.getTranslationFor('login_credentials_error'), userSettings));
       }
       if (_credentialsError || _connectError) {
         return;
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage>
         _connectError = true;
       });
       Scaffold.of(context)
-          .showSnackBar(setUpConnectDbUfrSnack('Impossible de joindre DbUfr.'));
+          .showSnackBar(setUpSnackBar('Impossible de joindre DbUfr.', userSettings));
     }
   }
 
@@ -277,7 +277,7 @@ class _LoginPageState extends State<LoginPage>
     return Icon(
       FontAwesomeIcons.userGraduate,
       size: 100,
-      color: colorFromDouble(userSettings.primaryColor),
+      color: Colors.black,
     );
   }
 
@@ -330,12 +330,18 @@ class _LoginPageState extends State<LoginPage>
               color: colorFromDouble(
                 userSettings.primaryColor,
               ),
+
             )),
         hintText: langHandler.getTranslationFor('login_student_no'),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        labelText: langHandler.getTranslationFor('login_student_no'),
+        labelStyle: TextStyle(
+          color:colorFromDouble(userSettings.primaryColor),
+          fontFamily: userSettings.fontName
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: Colors.blue),
+          borderSide: BorderSide(color: colorFromDouble(userSettings.primaryColor)),
         ),
       ),
       cursorColor: colorFromDouble(userSettings.primaryColor),
@@ -355,6 +361,8 @@ class _LoginPageState extends State<LoginPage>
       autofocus: false,
       obscureText: _obscureText,
       decoration: InputDecoration(
+        fillColor: colorFromDouble(userSettings.primaryColor),
+        hoverColor: colorFromDouble(userSettings.primaryColor),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
@@ -363,6 +371,11 @@ class _LoginPageState extends State<LoginPage>
               ),
             )),
         hintText: langHandler.getTranslationFor('login_password'),
+        labelText: langHandler.getTranslationFor('login_password'),
+        labelStyle: TextStyle(
+          color: colorFromDouble(userSettings.primaryColor),
+          fontFamily: userSettings.fontName
+        ),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         focusColor: colorFromDouble(userSettings.primaryColor),
         border: OutlineInputBorder(

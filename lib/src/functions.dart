@@ -377,20 +377,20 @@ LinearGradient getLinearGradientBg() {
       ]);
 }
 
-SnackBar setUpConnectDbUfrSnack(String text) {
+SnackBar setUpSnackBar(String text, UserSettings us) {
   return SnackBar(
     duration: Duration(seconds: 2),
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        side: BorderSide(color: Colors.lightBlue[300], width: 2)),
+        side: BorderSide(color: colorFromDouble(us.primaryColor), width: 2)),
     content: Container(
       padding: EdgeInsets.all(10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(Icons.error),
+          Icon(Icons.error, color: colorFromDouble(us.primaryColor),),
           SizedBox(
             width: 15,
           ),
@@ -398,6 +398,10 @@ SnackBar setUpConnectDbUfrSnack(String text) {
             child: Text(
               text,
               overflow: TextOverflow.clip,
+              style: TextStyle(
+                fontSize: us.subtitlesFontSize,
+                fontFamily: us.fontName
+              ),
             ),
           )
         ],

@@ -116,8 +116,8 @@ class _SettingsPageState extends State<SettingsPage>
         onPressed: () {
           setState(() {
             if (tmpLinear.length >= 10) {
-              Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-                  langHandler.getTranslationFor('settings_no_more_colors')));
+              Scaffold.of(context).showSnackBar(setUpSnackBar(
+                  langHandler.getTranslationFor('settings_no_more_colors'), userSettings));
             } else {
               tmpLinear.add(tmpLinear[tmpLinear.length - 1]);
             }
@@ -182,9 +182,9 @@ class _SettingsPageState extends State<SettingsPage>
                       tmpLinear.removeAt(i);
                     });
                   } else {
-                    Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
+                    Scaffold.of(context).showSnackBar(setUpSnackBar(
                         langHandler
-                            .getTranslationFor('settings_min_two_colors')));
+                            .getTranslationFor('settings_min_two_colors'), userSettings));
                   }
                 },
                 child: Icon(

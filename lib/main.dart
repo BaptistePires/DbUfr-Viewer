@@ -14,18 +14,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Db ufr checker',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+//        primarySwatch: Colors.blue,
+          ),
       initialRoute: '/',
       routes: {
         '/': (context) => Scaffold(body: HomePage()),
-        '/login': (context) => Scaffold(
-              body: LoginPage(),
-            ),
+        '/login': (context) => Scaffold(body: LoginPage()),
         '/grades': (context) => Scaffold(body: GradesPage()),
-        '/settings': (context) => Scaffold(
-              body: SettingsPage(),
-            )
+        '/settings': (context) => Scaffold(body: SettingsPage())
       },
     );
   }

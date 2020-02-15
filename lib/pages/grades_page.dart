@@ -569,8 +569,8 @@ class _GradesPageState extends State<GradesPage>
         setState(() {
           _refreshing = false;
           if (ues.length > 0) {
-            Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-                langHandler.getTranslationFor('grades_update_error')));
+            Scaffold.of(context).showSnackBar(setUpSnackBar(
+                langHandler.getTranslationFor('grades_update_error'), userSettings));
           }
         });
       }
@@ -586,7 +586,7 @@ class _GradesPageState extends State<GradesPage>
   }
 
   void _showSnackBarSuccessRefresh() {
-    Scaffold.of(context).showSnackBar(setUpConnectDbUfrSnack(
-        langHandler.getTranslationFor('grades_data_update_success')));
+    Scaffold.of(context).showSnackBar(setUpSnackBar(
+        langHandler.getTranslationFor('grades_data_update_success'), userSettings));
   }
 }
