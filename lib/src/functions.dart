@@ -301,12 +301,12 @@ Future<List<TeachingUnit>> loadGrades() async {
   if (!file.existsSync()) return null;
   String content = await file.readAsString();
   if (content.length == 0) return null;
-  dynamic json = jsonDecode(content);
+  List<dynamic> json = jsonDecode(content);
   List<TeachingUnit> teachingUnits = new List<TeachingUnit>();
-  json.forEach((o) {
-    teachingUnits.add(TeachingUnit.fromJson(o));
-  });
 
+    json.forEach((o) {
+      teachingUnits.add(TeachingUnit.fromJson(o));
+    });
   return teachingUnits;
 }
 
@@ -362,7 +362,6 @@ List<String> getFontsNameFromPaths(List<String> paths) {
 
 // WIDGETS CONSTRUCTOS
 LinearGradient getLinearGradientBg() {
-  print(HSVColor.fromColor(Colors.lightBlue[800]));
   return LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -415,7 +414,7 @@ Container getLoadingScreen(AnimationController parent) {
         children: <Widget>[
           SpinKitPouringHourglass(
             color: Colors.black,
-            controller: parent,
+//            controller: parent,
           ),
           SizedBox(
             height: 60,

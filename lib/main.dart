@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Db ufr checker',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -29,4 +29,6 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+
+
 }

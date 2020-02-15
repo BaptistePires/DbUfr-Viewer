@@ -4,6 +4,7 @@ import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
 import 'package:dbufr_checker/src/LifeCycleEventHandler.dart';
 import 'package:dbufr_checker/src/models/Grade.dart';
 import 'package:dbufr_checker/src/models/TeachingUnit.dart';
+import 'package:dbufr_checker/src/models/UserSettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -23,9 +24,12 @@ class _GradesPageState extends State<GradesPage>
   bool _cantConnect = false;
   bool _refreshing = false;
   bool _loading = true;
+  bool _settingsInit = false;
 
   LangHandlerSingleton langHandler;
   AnimationController _animationController;
+
+  UserSettings userSettings;
 
   @override
   void initState() {
@@ -42,6 +46,13 @@ class _GradesPageState extends State<GradesPage>
             LifecycleEventHandler(resumeCallBack: () => refresh()));
       });
     });
+
+//    loadUserSettings().then((value) {
+//      setState(() {
+//        userSettings = value;
+//        _settingsInit = true;
+//      });
+//    } );
   }
 
   @override
@@ -58,7 +69,7 @@ class _GradesPageState extends State<GradesPage>
         // TODO : when dynamics color replace w/ fist value of linear gradient
       backgroundColor: Colors.lightBlue[400],
         appBar: _setUpAppBar(),
-        body: !_cantConnect || _loading
+        body: !_cantConnect || _loading //|| !_settingsInit
             ? Container(
                 padding: EdgeInsets.only(top: 10),
                 decoration: BoxDecoration(gradient: getLinearGradientBg()),
@@ -148,7 +159,8 @@ class _GradesPageState extends State<GradesPage>
   AppBar _setUpAppBar() {
     return AppBar(
       title:
-          !_loading ? Text(langHandler.getTranslationFor('grades')) : Text(''),
+          !_loading ? Text(langHandler.getTranslationFor('grades'),
+          style: TextStyle(fontFamily: 'montserrat'),) : Text(''),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(25)
       ),
@@ -372,6 +384,13 @@ class _GradesPageState extends State<GradesPage>
                           _createRoute(), (Route<dynamic> route) => false);
                     }
                   }),
+              SpeedDialChild(
+                child: Icon(Icons.settings),
+                label: !_loading ? langHandler.getTranslationFor('settings'): '',
+                onTap: () {
+                  Navigator.of(context).pushNamed('/settings');
+                }
+              ),
               SpeedDialChild(
                   child: Icon(Icons.refresh),
                   label: !_loading

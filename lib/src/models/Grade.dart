@@ -16,6 +16,12 @@ class Grade {
         viewed = json['viewed'],
         newGrade = false;
 
+  Map<String, dynamic> get asMap{
+    return {'grade': this.grade,
+    'max': this.max,
+    'desc': this.desc,
+    'viewed': this.viewed};
+  }
   Map<String, dynamic> toJson() => {
         'grade': this.grade,
         'max': this.max,
