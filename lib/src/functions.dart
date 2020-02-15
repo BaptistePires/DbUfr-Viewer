@@ -456,5 +456,6 @@ Color colorFromDouble(double c) {
   assert(c >= 0 && c <= 360);
   return HSVColor.fromAHSV(1, c, 1, 1).toColor();
 }
+
 List<Color> getGradientFromTmpColors(List<double> colors) =>
     colors.map((e) => HSVColor.fromAHSV(1, e, 1, 1).toColor()).toList();

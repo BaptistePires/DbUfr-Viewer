@@ -3,7 +3,12 @@ const String PRIMARY_COLOR_NAME = 'primaryColor';
 const String TITLE_FONT_SIZE = 'titleFontSize';
 const String SUBTITLE_FONT_SIZE = 'subtitleFontSize';
 const String FONT_NAME = 'fontName';
-const List<double> DEFAULT_GRADIENT = [360 * .5558, 360*.5638,360*.5829,360*.5887];
+const List<double> DEFAULT_GRADIENT = [
+  360 * .5558,
+  360 * .5638,
+  360 * .5829,
+  360 * .5887
+];
 const double DEFAULT_PRIMARY_COLOR = 206.568;
 const double DEFAULT_TITLE_FONT_SIZE = 20;
 const double DEFAULT_SUBTITLE_FONT_SIZE = 15;
@@ -59,11 +64,21 @@ class UserSettings {
     linearBgColors[id] = v;
   }
 
-  UserSettings copy() => new UserSettings(linearBgColors: this.linearBgColors, primaryColor: this.primaryColor, titleFontSize: this.titleFontSize, subtitlesFontSize: this.subtitlesFontSize, fontName: this.fontName);
+  UserSettings copy() => new UserSettings(
+      linearBgColors: this.linearBgColors,
+      primaryColor: this.primaryColor,
+      titleFontSize: this.titleFontSize,
+      subtitlesFontSize: this.subtitlesFontSize,
+      fontName: this.fontName);
 
-  static List<UserSettings> getTemplates(){
+  static List<UserSettings> getTemplates() {
     return [
-      UserSettings(linearBgColors: [276.0, 251.99999999999997], primaryColor: 270.6443914081144, titleFontSize: 20.0, subtitlesFontSize: 16.0, fontName: 'tomorrow')
+      UserSettings(
+          linearBgColors: [276.0, 251.99999999999997],
+          primaryColor: 270.6443914081144,
+          titleFontSize: 20.0,
+          subtitlesFontSize: 16.0,
+          fontName: 'tomorrow')
     ];
   }
 }

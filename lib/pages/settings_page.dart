@@ -53,7 +53,6 @@ class _SettingsPageState extends State<SettingsPage>
         _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
         _tmpFontName = userSettings.fontName;
         _loadingSettings = false;
-
       });
     });
 
@@ -370,7 +369,6 @@ class _SettingsPageState extends State<SettingsPage>
             _tmpFontName = v;
           });
         },
-
         items: availableFonts.map((e) {
           return DropdownMenuItem(
             value: e,
@@ -392,14 +390,14 @@ class _SettingsPageState extends State<SettingsPage>
       unselectedFontSize: 14,
       onTap: (i) {
         if (i == 0) {
-              setState(() {
-                userSettings = UserSettings().copy();
-                tmpLinear = List.from(userSettings.linearBgColors);
-                tmpPrimaryColor = userSettings.primaryColor;
-                _tmpFontName = userSettings.fontName;
-                _tmpTitleFontSize = userSettings.titleFontSize;
-                _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
-              });
+          setState(() {
+            userSettings = UserSettings().copy();
+            tmpLinear = List.from(userSettings.linearBgColors);
+            tmpPrimaryColor = userSettings.primaryColor;
+            _tmpFontName = userSettings.fontName;
+            _tmpTitleFontSize = userSettings.titleFontSize;
+            _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
+          });
         } else if (i == 1) {
           setState(() {
             tmpLinear = List.from(userSettings.linearBgColors);
@@ -408,7 +406,7 @@ class _SettingsPageState extends State<SettingsPage>
             _tmpTitleFontSize = userSettings.titleFontSize;
             _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
           });
-        } else if(i == 2){
+        } else if (i == 2) {
           setState(() {
             userSettings.linearBgColors = tmpLinear;
             userSettings.primaryColor = tmpPrimaryColor;
@@ -471,7 +469,6 @@ class _SettingsPageState extends State<SettingsPage>
                 fontFamily: _tmpFontName),
           ),
         ),
-
       ],
     );
   }

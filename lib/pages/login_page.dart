@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
 import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
+import 'package:dbufr_checker/src/models/UserSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +36,7 @@ class _LoginPageState extends State<LoginPage>
   // Others
   LangHandlerSingleton langHandler;
   AnimationController _animationcontroller;
+  UserSettings userSettings = UserSettings();
 
   @override
   void initState() {
@@ -49,6 +51,14 @@ class _LoginPageState extends State<LoginPage>
         this._loading = false;
       });
     }));
+
+    loadUserSettings().then((value) {
+      if (value != null) {
+        setState(() {
+          userSettings = value;
+        });
+      }
+    });
   }
 
   Future<void> nextLang() async {
@@ -83,13 +93,8 @@ class _LoginPageState extends State<LoginPage>
                   gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                    Colors.lightBlue[400],
-                    Colors.lightBlue,
-                    Colors.lightBlue[600],
-                    Colors.lightBlue[700],
-                    Colors.lightBlue[800],
-                  ])),
+                      colors: getGradientFromTmpColors(
+                          userSettings.linearBgColors))),
               child: Center(
                 child: ListView(
                   shrinkWrap: true,
@@ -231,19 +236,33 @@ class _LoginPageState extends State<LoginPage>
 //              padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
 //              child: Column(
               children: <Widget>[
-                Text(langHandler.getTranslationFor('login_info')),
+                Text(
+                  langHandler.getTranslationFor('login_info'),
+                  style: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.titleFontSize),
+                ),
                 Divider(
-                  color: Colors.blue,
+                  color: colorFromDouble(userSettings.primaryColor),
                   thickness: 2,
                 ),
               ],
 //              )
             ),
-            content:
-                Text(langHandler.getTranslationFor("login_alert_remember_me")),
+            content: Text(
+                langHandler.getTranslationFor("login_alert_remember_me"),
+                style: TextStyle(
+                    fontFamily: userSettings.fontName,
+                    fontSize: userSettings.subtitlesFontSize)),
             actions: <Widget>[
               FlatButton(
-                child: Text(langHandler.getTranslationFor('login_ok')),
+                child: Text(
+                  langHandler.getTranslationFor('login_ok'),
+                  style: TextStyle(
+                    fontFamily: userSettings.fontName,
+                    color: colorFromDouble(userSettings.primaryColor),
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -257,7 +276,7 @@ class _LoginPageState extends State<LoginPage>
     return Icon(
       FontAwesomeIcons.userGraduate,
       size: 100,
-      color: Colors.black,
+      color: colorFromDouble(userSettings.primaryColor),
     );
   }
 
@@ -284,7 +303,12 @@ class _LoginPageState extends State<LoginPage>
                 },
                 iconSize: 19,
               ),
-              Text(langHandler.getTranslationFor('login_remember_me')),
+              Text(
+                langHandler.getTranslationFor('login_remember_me'),
+                style: TextStyle(
+                    fontSize: userSettings.subtitlesFontSize,
+                    fontFamily: userSettings.fontName),
+              ),
               _setUpRememberMe(),
             ],
           ),
@@ -299,13 +323,21 @@ class _LoginPageState extends State<LoginPage>
       keyboardType: TextInputType.number,
       autofocus: false,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(
+              color: colorFromDouble(
+                userSettings.primaryColor,
+              ),
+            )),
         hintText: langHandler.getTranslationFor('login_student_no'),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
+          borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide(color: Colors.blue),
         ),
       ),
+      cursorColor: colorFromDouble(userSettings.primaryColor),
       controller: studentNoController,
       enabled: _connecting ? false : true,
       validator: (value) {
@@ -313,6 +345,7 @@ class _LoginPageState extends State<LoginPage>
           return langHandler.getTranslationFor('login_student_no_missing');
         return null;
       },
+      style: TextStyle(fontFamily: userSettings.fontName),
     );
   }
 
@@ -321,11 +354,20 @@ class _LoginPageState extends State<LoginPage>
       autofocus: false,
       obscureText: _obscureText,
       decoration: InputDecoration(
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide(
+              color: colorFromDouble(
+                userSettings.primaryColor,
+              ),
+            )),
         hintText: langHandler.getTranslationFor('login_password'),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+        focusColor: colorFromDouble(userSettings.primaryColor),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-          borderSide: BorderSide(color: Colors.blue),
+          borderRadius: BorderRadius.circular(30.0),
+          borderSide:
+              BorderSide(color: colorFromDouble(userSettings.primaryColor)),
         ),
         suffixIcon: IconButton(
           onPressed: () {
@@ -334,8 +376,10 @@ class _LoginPageState extends State<LoginPage>
             });
           },
           icon: Icon(Icons.remove_red_eye),
+          color: colorFromDouble(userSettings.primaryColor),
         ),
       ),
+      cursorColor: colorFromDouble(userSettings.primaryColor),
       controller: passwordController,
       enabled: _connecting ? false : true,
       validator: (value) {
@@ -343,12 +387,14 @@ class _LoginPageState extends State<LoginPage>
           return langHandler.getTranslationFor('login_password_missing');
         return null;
       },
+      style: TextStyle(fontFamily: userSettings.fontName),
     );
   }
 
   Checkbox _setUpRememberMe() {
     return Checkbox(
       value: _doRememberMe,
+      activeColor: colorFromDouble(userSettings.primaryColor),
       onChanged: (state) {
         setState(() {
           _doRememberMe = state;
@@ -363,6 +409,7 @@ class _LoginPageState extends State<LoginPage>
         vertical: 16,
       ),
       child: OutlineButton(
+        color: colorFromDouble(userSettings.primaryColor),
         onPressed: _connecting
             ? null
             : () {
@@ -388,10 +435,19 @@ class _LoginPageState extends State<LoginPage>
                   )
             : Text(
                 langHandler.getTranslationFor('login_login'),
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: userSettings.subtitlesFontSize,
+                    fontFamily: userSettings.fontName),
               ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        borderSide: BorderSide(color: Colors.blue),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: BorderSide(
+              color: colorFromDouble(userSettings.primaryColor),
+            )),
+        borderSide: BorderSide(
+          color: colorFromDouble(userSettings.primaryColor),
+        ),
       ),
     );
   }

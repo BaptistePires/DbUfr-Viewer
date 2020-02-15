@@ -55,10 +55,9 @@ class _GradesPageState extends State<GradesPage>
         loadUserSettings().then((value) {
           setState(() {
             userSettings = value;
-            _settingsInit =false;
+            _settingsInit = false;
           });
         });
-
       });
     });
   }
