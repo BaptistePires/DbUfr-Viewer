@@ -126,7 +126,7 @@ class _GradesPageState extends State<GradesPage>
                         color: colorFromDouble(userSettings.primaryColor)),
                   ),
                   content: Text(
-                    langHandler.getTranslationFor('grades_confirm_desc'),
+                    langHandler.getTranslationFor('grades_confirm_disc'),
                     style: TextStyle(
                       fontFamily: userSettings.fontName,
                       fontSize: userSettings.subtitlesFontSize,
@@ -137,7 +137,13 @@ class _GradesPageState extends State<GradesPage>
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
-                      child: Text(langHandler.getTranslationFor('no')),
+                      child: Text(
+                        langHandler.getTranslationFor('no'),
+                        style: TextStyle(
+                            fontFamily: userSettings.fontName,
+                            fontSize: userSettings.subtitlesFontSize,
+                            color: colorFromDouble(userSettings.primaryColor)),
+                      ),
                     ),
                     FlatButton(
                       onPressed: () async {
@@ -171,7 +177,7 @@ class _GradesPageState extends State<GradesPage>
                     color: colorFromDouble(userSettings.primaryColor)),
               ),
               content: Text(
-                langHandler.getTranslationFor('grades_confirm_disc'),
+                langHandler.getTranslationFor('grades_confirm_desc'),
                 style: TextStyle(
                   fontFamily: userSettings.fontName,
                   fontSize: userSettings.subtitlesFontSize,

@@ -275,10 +275,12 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Widget _setUpLogo() {
-    return Icon(
-      FontAwesomeIcons.userGraduate,
-      size: 100,
-      color: Colors.black,
+    return SizedBox(
+      child: Image.asset(
+        'assets/icon/icon.png',
+        width: 100,
+        height: 100,
+      ),
     );
   }
 

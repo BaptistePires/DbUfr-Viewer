@@ -11,6 +11,7 @@
   "save": "Save",
   "reset": "Reset",
   "text": "Text",
+  "quit": "Quit",
 
   "login_connection": "Login",
   "login_student_no": "Student N°",
@@ -36,5 +37,7 @@
   "settings_min_two_colors": "You have to keep at least two colors.",
   "settings_title_font_size": "Taille de la police des titres",
   "settings_subtitle_font_size": "Taille de la police des sous-titres",
-  "settings_reset_origin": "Reset origin"
+  "settings_reset_origin": "Reset origin",
+  "settings_quit_without_saving": "You have not saved changes, are you sure you want to quit ?",
+  "settings_settings_saved": "Settings updated"
 }

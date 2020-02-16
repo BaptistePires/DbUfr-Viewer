@@ -1,7 +1,9 @@
 import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
 import 'package:dbufr_checker/src/functions.dart';
 import 'package:dbufr_checker/src/models/UserSettings.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/android.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -67,24 +69,84 @@ class _SettingsPageState extends State<SettingsPage>
   @override
   Widget build(BuildContext context) {
     return !_loadingLang && !_loadingSettings && !_loadingFonts
-        ? Scaffold(
-            appBar: _setUpAppbar(),
-            backgroundColor: colorFromDouble(userSettings.linearBgColors[0]),
-            body: Container(
-              padding: EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: getGradientFromTmpColors(),
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter)
+        ? WillPopScope(
+            onWillPop: _onWillPop,
+            child: Scaffold(
+              appBar: _setUpAppbar(),
+              backgroundColor: colorFromDouble(userSettings.linearBgColors[0]),
+              body: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: getGradientFromTmpColors(),
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter)
 //                gradient: getLinearGradientBg(),
-                  ),
-              child: _buildListView(),
-            ),
-            bottomNavigationBar: _setUpBottomAppBar(),
-          )
+                    ),
+                child: _buildListView(),
+              ),
+              bottomNavigationBar: _setUpBottomAppBar(),
+            ))
         : getLoadingScreen(
             _animationController, userSettings ??= UserSettings());
+  }
+
+  bool isThereChanges() {
+    return !(tmpPrimaryColor == userSettings.primaryColor &&
+        listEquals(tmpLinear, userSettings.linearBgColors) &&
+        _tmpFontName == userSettings.fontName &&
+        _tmpTitleFontSize == userSettings.titleFontSize &&
+        _tmpSubtitleFontSize == userSettings.subtitlesFontSize);
+  }
+
+  Future<bool> _onWillPop() async {
+    if (!isThereChanges()) return true;
+    return (await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(
+                    langHandler.getTranslationFor('quit'),
+                    style: TextStyle(
+                        fontFamily: userSettings.fontName,
+                        fontSize: userSettings.titleFontSize,
+                        color: colorFromDouble(userSettings.primaryColor)),
+                  ),
+                  content: Text(
+                    langHandler
+                        .getTranslationFor('settings_quit_without_saving'),
+                    style: TextStyle(
+                      fontFamily: userSettings.fontName,
+                      fontSize: userSettings.subtitlesFontSize,
+                    ),
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text(
+                        langHandler.getTranslationFor('no'),
+                        style: TextStyle(
+                            fontFamily: userSettings.fontName,
+                            fontSize: userSettings.subtitlesFontSize,
+                            color: colorFromDouble(userSettings.primaryColor)),
+                      ),
+                    ),
+                    FlatButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text(
+                        langHandler.getTranslationFor('yes'),
+                        style: TextStyle(
+                            fontFamily: userSettings.fontName,
+                            fontSize: userSettings.subtitlesFontSize,
+                            color: colorFromDouble(userSettings.primaryColor)),
+                      ),
+                    ),
+                  ],
+                ))) ??
+        false;
   }
 
   List<Widget> _setUpLinearGradientParameters() {
@@ -133,10 +195,7 @@ class _SettingsPageState extends State<SettingsPage>
     gradientParams.add(Container(
       height: 100,
       decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-            width: 2
-          ),
+          border: Border.all(color: Colors.black, width: 2),
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             colors: getGradientFromTmpColors(),
@@ -231,10 +290,7 @@ class _SettingsPageState extends State<SettingsPage>
           child: Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                border: Border.all(
-                    color: Colors.black,
-                    width: 2
-                ),
+                border: Border.all(color: Colors.black, width: 2),
                 shape: BoxShape.circle,
                 color: colorFromDouble(tmpPrimaryColor),
               )),
@@ -271,6 +327,10 @@ class _SettingsPageState extends State<SettingsPage>
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20))),
             child: ExpansionTile(
+              leading: Icon(
+                Icons.palette,
+                color: colorFromDouble(tmpPrimaryColor),
+              ),
               title: Text(langHandler.getTranslationFor('colors'),
                   style: TextStyle(
                       fontSize: _tmpTitleFontSize,
@@ -310,6 +370,8 @@ class _SettingsPageState extends State<SettingsPage>
                     fontFamily: _tmpFontName,
                     letterSpacing: 1),
               ),
+              leading: Icon(Icons.text_fields,
+                  color: colorFromDouble(tmpPrimaryColor)),
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(3),
@@ -399,6 +461,7 @@ class _SettingsPageState extends State<SettingsPage>
       backgroundColor: Colors.white,
       selectedLabelStyle: TextStyle(color: Colors.black, fontSize: 14),
       unselectedFontSize: 14,
+      elevation: 10,
       onTap: (i) {
         if (i == 0) {
           setState(() {
@@ -410,6 +473,7 @@ class _SettingsPageState extends State<SettingsPage>
             _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
           });
         } else if (i == 1) {
+          if (!isThereChanges()) return;
           setState(() {
             tmpLinear = List.from(userSettings.linearBgColors);
             tmpPrimaryColor = userSettings.primaryColor;
@@ -426,6 +490,9 @@ class _SettingsPageState extends State<SettingsPage>
             userSettings.titleFontSize = _tmpTitleFontSize;
           });
           saveUserSettings(userSettings);
+          Scaffold.of(context).showSnackBar(setUpSnackBar(
+              langHandler.getTranslationFor('settings_settings_saved'),
+              userSettings));
         }
       },
       items: [
@@ -449,7 +516,7 @@ class _SettingsPageState extends State<SettingsPage>
         BottomNavigationBarItem(
           icon: Icon(
             Icons.undo,
-            color: Colors.black,
+            color: isThereChanges() ? Colors.black : Colors.grey,
           ),
           title: Text(
             langHandler.getTranslationFor("reset"),
@@ -460,17 +527,17 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           activeIcon: Icon(
             Icons.undo,
-            color: Colors.black,
+            color: isThereChanges() ? Colors.black : Colors.grey,
           ),
         ),
         BottomNavigationBarItem(
           icon: Icon(
             Icons.file_download,
-            color: Colors.black,
+            color: isThereChanges() ? Colors.black : Colors.grey,
           ),
           activeIcon: Icon(
             Icons.file_download,
-            color: Colors.black,
+            color: isThereChanges() ? Colors.black : Colors.grey,
           ),
           title: Text(
             langHandler.getTranslationFor("save"),
