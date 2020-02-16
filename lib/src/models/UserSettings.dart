@@ -3,15 +3,10 @@ const String PRIMARY_COLOR_NAME = 'primaryColor';
 const String TITLE_FONT_SIZE = 'titleFontSize';
 const String SUBTITLE_FONT_SIZE = 'subtitleFontSize';
 const String FONT_NAME = 'fontName';
-const List<double> DEFAULT_GRADIENT = [
-  360 * .5558,
-  360 * .5638,
-  360 * .5829,
-  360 * .5887
-];
-const double DEFAULT_PRIMARY_COLOR = 206.568;
-const double DEFAULT_TITLE_FONT_SIZE = 20;
-const double DEFAULT_SUBTITLE_FONT_SIZE = 15;
+const List<double> DEFAULT_GRADIENT = [270.0,222.0];
+const double DEFAULT_PRIMARY_COLOR = 265.63245823389;
+const double DEFAULT_TITLE_FONT_SIZE = 19;
+const double DEFAULT_SUBTITLE_FONT_SIZE = 12;
 const String DEFAULT_FONT_NAME = 'montserrat';
 
 class UserSettings {

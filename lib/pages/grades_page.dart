@@ -177,7 +177,7 @@ class _GradesPageState extends State<GradesPage>
                     color: colorFromDouble(userSettings.primaryColor)),
               ),
               content: Text(
-                langHandler.getTranslationFor('grades_confirm_desc'),
+                langHandler.getTranslationFor('grades_confirm_disc'),
                 style: TextStyle(
                   fontFamily: userSettings.fontName,
                   fontSize: userSettings.subtitlesFontSize,

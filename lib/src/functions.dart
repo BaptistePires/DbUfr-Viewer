@@ -342,6 +342,7 @@ Future<void> saveUserSettings(UserSettings settings) async {
   final path = await _localPath;
   File file = File('$path/$USER_SETTINGS_NAME');
   String jsonSettings = json.encode(settings.asMap);
+  print(jsonSettings);
   await file.writeAsString(jsonSettings);
 }
 
