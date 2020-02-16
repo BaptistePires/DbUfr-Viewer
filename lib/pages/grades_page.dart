@@ -19,7 +19,7 @@ class GradesPage extends StatefulWidget {
 
 class _GradesPageState extends State<GradesPage>
     with SingleTickerProviderStateMixin {
-  List<TeachingUnit> ues = new List<TeachingUnit>();
+  List<TeachingUnit> teachingUnits = new List<TeachingUnit>();
   bool _isInitialized = false;
   bool _cantConnect = false;
   bool _refreshing = false;
@@ -63,8 +63,8 @@ class _GradesPageState extends State<GradesPage>
     if (!_isInitialized) {
       setup();
     }
-    if (ues.length >= 2) {
-      ues = sortTeachingUnits(ues);
+    if (teachingUnits.length >= 2) {
+      teachingUnits = sortTeachingUnits(teachingUnits);
     }
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -251,7 +251,7 @@ class _GradesPageState extends State<GradesPage>
             return;
           }
           setState(() {
-            ues = r;
+            teachingUnits = r;
             _isInitialized = true;
             _cantConnect = false;
           });
@@ -268,8 +268,8 @@ class _GradesPageState extends State<GradesPage>
     var document = parse(html);
     await Future.delayed(Duration(seconds: 1));
     setState(() {
-      ues = pareTUFromHTML(document);
-      saveToFile(ues);
+      teachingUnits = pareTUFromHTML(document);
+      saveToFile(teachingUnits);
       _isInitialized = true;
       _refreshing = false;
     });
@@ -281,7 +281,7 @@ class _GradesPageState extends State<GradesPage>
     return RefreshIndicator(
       onRefresh: () => refresh(),
       child: ListView.builder(
-        itemCount: ues.length,
+        itemCount: teachingUnits.length,
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(5),
         itemBuilder: (context, i) {
@@ -291,21 +291,21 @@ class _GradesPageState extends State<GradesPage>
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25.0),
               side: BorderSide(
-                  color: !hasUnviewedGrades(ues[i])
+                  color: !hasUnviewedGrades(teachingUnits[i])
                       ? Colors.transparent
                       : Colors.red,
                   width: 2),
             ),
             child: Container(
               padding: EdgeInsets.all(3),
-              child: ues[i].grades.length > 0
+              child: teachingUnits[i].grades.length > 0
                   ? Theme(
                       data: theme,
                       // START TILE
                       child: ExpansionTile(
                         // TITLE
                         title: Text(
-                          '${ues[i].desc}',
+                          '${teachingUnits[i].desc}',
                           style: TextStyle(
                               fontFamily: userSettings.fontName,
                               fontSize: userSettings.titleFontSize,
@@ -317,8 +317,8 @@ class _GradesPageState extends State<GradesPage>
                         subtitle: Container(
                           padding: EdgeInsets.only(top: 5, left: 8),
                           child: Text(
-                              '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ' +
-                                  truncMonthToFull(ues[i].month),
+                              '${teachingUnits[i].name} [${teachingUnits[i].group}] - ${teachingUnits[i].year} - ' +
+                                  truncMonthToFull(teachingUnits[i].month),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: userSettings.fontName,
@@ -332,14 +332,14 @@ class _GradesPageState extends State<GradesPage>
                         onExpansionChanged: (change) {
                           bool hasChanged = false;
                           setState(() {
-                            ues[i].grades.forEach((g) {
+                            teachingUnits[i].grades.forEach((g) {
                               if (!g.viewed) {
                                 g.viewed = true;
                                 hasChanged = true;
                               }
                             });
                           });
-                          if (hasChanged) saveToFile(ues);
+                          if (hasChanged) saveToFile(teachingUnits);
                         },
                       ))
                   : Container(
@@ -349,7 +349,7 @@ class _GradesPageState extends State<GradesPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            '${ues[i].desc}',
+                            '${teachingUnits[i].desc}',
                             style: TextStyle(
                                 fontFamily: userSettings.fontName,
                                 fontSize: userSettings.titleFontSize,
@@ -361,7 +361,7 @@ class _GradesPageState extends State<GradesPage>
                           Container(
                             padding: EdgeInsets.only(top: 5, left: 8),
                             child: Text(
-                              '${ues[i].name} [${ues[i].group}] - ${ues[i].year} - ${truncMonthToFull(ues[i].month)}',
+                              '${teachingUnits[i].name} [${teachingUnits[i].group}] - ${teachingUnits[i].year} - ${truncMonthToFull(teachingUnits[i].month)}',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: userSettings.fontName,
@@ -382,7 +382,7 @@ class _GradesPageState extends State<GradesPage>
 
   List<Widget> _setUpGradesListForTU(int i) {
     List<Widget> gradesWidgets = new List<Widget>();
-    List<Grade> grades = ues[i].grades;
+    List<Grade> grades = teachingUnits[i].grades;
 
     if (grades.length == 0) {
       gradesWidgets.add(Text(
@@ -392,7 +392,7 @@ class _GradesPageState extends State<GradesPage>
             fontFamily: userSettings.fontName),
       ));
     } else {
-      ues[i].grades.forEach((Grade g) {
+      teachingUnits[i].grades.forEach((Grade g) {
         gradesWidgets.add(Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -538,7 +538,7 @@ class _GradesPageState extends State<GradesPage>
         List<TeachingUnit> newTeachingUnits = pareTUFromHTML(parse(html));
         newTeachingUnits.forEach((newTeachingUnData) {
           bool teachingUExists = false;
-          ues.forEach((currentTu) {
+          teachingUnits.forEach((currentTu) {
             if (newTeachingUnData.name == currentTu.name) {
               teachingUExists = true;
               if (newTeachingUnData.grades.length != currentTu.grades.length) {
@@ -559,7 +559,7 @@ class _GradesPageState extends State<GradesPage>
               }
             }
           });
-          if (!teachingUExists) ues.add(newTeachingUnData);
+          if (!teachingUExists) teachingUnits.add(newTeachingUnData);
         });
         setState(() {
           _refreshing = false;
@@ -570,7 +570,7 @@ class _GradesPageState extends State<GradesPage>
       } catch (e) {
         setState(() {
           _refreshing = false;
-          if (ues.length > 0) {
+          if (teachingUnits.length > 0) {
             Scaffold.of(context).showSnackBar(setUpSnackBar(
                 langHandler.getTranslationFor('grades_update_error'),
                 userSettings));

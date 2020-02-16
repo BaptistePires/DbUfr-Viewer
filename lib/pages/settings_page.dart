@@ -133,6 +133,10 @@ class _SettingsPageState extends State<SettingsPage>
     gradientParams.add(Container(
       height: 100,
       decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+            width: 2
+          ),
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             colors: getGradientFromTmpColors(),
@@ -227,6 +231,10 @@ class _SettingsPageState extends State<SettingsPage>
           child: Container(
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
+                border: Border.all(
+                    color: Colors.black,
+                    width: 2
+                ),
                 shape: BoxShape.circle,
                 color: colorFromDouble(tmpPrimaryColor),
               )),

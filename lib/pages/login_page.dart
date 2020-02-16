@@ -35,14 +35,14 @@ class _LoginPageState extends State<LoginPage>
 
   // Others
   LangHandlerSingleton langHandler;
-  AnimationController _animationcontroller;
+  AnimationController _animationController;
   UserSettings userSettings = UserSettings();
 
   @override
   void initState() {
     setState(() {
       _loading = true;
-      _animationcontroller = new AnimationController(
+      _animationController = new AnimationController(
           vsync: this, duration: Duration(milliseconds: 800));
     });
     LangHandlerSingleton.getInstance().then(((o) {
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     if (_firstOpening) checkIfLogged();
     return _loading
-        ? Scaffold(body: getLoadingScreen(_animationcontroller, userSettings))
+        ? Scaffold(body: getLoadingScreen(_animationController, userSettings))
         : Scaffold(
             floatingActionButton: FloatingActionButton(
               child: langHandler.getCurrentFlag(),
