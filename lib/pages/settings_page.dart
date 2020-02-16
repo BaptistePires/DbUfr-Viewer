@@ -83,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage>
             ),
             bottomNavigationBar: _setUpBottomAppBar(),
           )
-        : getLoadingScreen(_animationController, userSettings);
+        : getLoadingScreen(_animationController, userSettings??=UserSettings());
   }
 
   List<Widget> _setUpLinearGradientParameters() {
@@ -330,6 +330,7 @@ class _SettingsPageState extends State<SettingsPage>
       style: TextStyle(fontSize: _tmpTitleFontSize, fontFamily: _tmpFontName),
     ));
     txtParams.add(Slider(
+      activeColor: colorFromDouble(userSettings.primaryColor),
       value: _tmpTitleFontSize,
       min: 15,
       max: 25,
@@ -348,6 +349,7 @@ class _SettingsPageState extends State<SettingsPage>
           TextStyle(fontSize: _tmpSubtitleFontSize, fontFamily: _tmpFontName),
     ));
     txtParams.add(Slider(
+      activeColor: colorFromDouble(userSettings.primaryColor),
       value: _tmpSubtitleFontSize,
       min: 10,
       max: 20,
@@ -360,11 +362,9 @@ class _SettingsPageState extends State<SettingsPage>
       },
     ));
 
-    print('${userSettings.asMap} eeeeee');
     txtParams.add(DropdownButton(
         value: _tmpFontName,
         onChanged: (String v) {
-          print('tmt : $_tmpFontName');
           setState(() {
             _tmpFontName = v;
           });
@@ -385,7 +385,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   Widget _setUpBottomAppBar() {
     return BottomNavigationBar(
-      backgroundColor: colorFromDouble(tmpLinear[tmpLinear.length - 1]),
+      backgroundColor: Colors.white,
       selectedLabelStyle: TextStyle(color: Colors.black, fontSize: 14),
       unselectedFontSize: 14,
       onTap: (i) {

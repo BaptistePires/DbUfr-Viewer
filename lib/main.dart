@@ -16,9 +16,9 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-  UserSettings us;
+  UserSettings userSettings = UserSettings();
 
-  MyApp(this.us);
+  MyApp(this.userSettings);
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,22 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Db ufr checker',
       theme: ThemeData(
-//        primarySwatch: Colors.blue,
+//        cursorColor: colorFromDouble(userSettings.primaryColor),
+//        indicatorColor: colorFromDouble(userSettings.primaryColor),
+//          hoverColor: colorFromDouble(userSettings.primaryColor),
+//          accentColor: colorFromDouble(userSettings.primaryColor),
+//focusColor: colorFromDouble(userSettings.primaryColor),
+//highlightColor: colorFromDouble(userSettings.primaryColor),
+//primaryColor: colorFromDouble(userSettings.primaryColor),
+//toggleableActiveColor: colorFromDouble(userSettings.primaryColor),
+textSelectionColor: colorFromDouble(userSettings.primaryColor),
+textSelectionHandleColor: colorFromDouble(userSettings.primaryColor),
+//        primarySwatch: colorFromDouble(userSettings.primaryColor),
+        fontFamily: userSettings.fontName
           ),
       initialRoute: '/',
       routes: {
-        '/': (context) => Scaffold(body: HomePage(us)),
+        '/': (context) => Scaffold(body: HomePage(userSettings)),
         '/login': (context) => Scaffold(body: LoginPage()),
         '/grades': (context) => Scaffold(body: GradesPage()),
         '/settings': (context) => Scaffold(body: SettingsPage())

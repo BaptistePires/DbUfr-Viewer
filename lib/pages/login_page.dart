@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     if (_firstOpening) checkIfLogged();
     return _loading
-        ? getLoadingScreen(_animationcontroller, userSettings)
+        ? Scaffold(body:getLoadingScreen(_animationcontroller, userSettings))
         : Scaffold(
             floatingActionButton: FloatingActionButton(
               child: langHandler.getCurrentFlag(),
@@ -443,6 +443,9 @@ class _LoginPageState extends State<LoginPage>
                     child: Center(
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
+                        valueColor: new AlwaysStoppedAnimation<Color>(
+                          colorFromDouble(userSettings.primaryColor)
+                        ),
                       ),
                       widthFactor: 1,
                     ),
