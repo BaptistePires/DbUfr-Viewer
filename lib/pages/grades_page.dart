@@ -90,7 +90,7 @@ class _GradesPageState extends State<GradesPage>
                         ),
                       ),
               )
-            : getLoadingScreen(_animationController),
+            : getLoadingScreen(_animationController, userSettings),
         floatingActionButton: !_cantConnect || _loading || !_settingsInit
             ? _setUpFloatingActionBtn()
             : null,
@@ -323,7 +323,7 @@ class _GradesPageState extends State<GradesPage>
                               style: TextStyle(
                                 fontFamily: userSettings.fontName,
                                 fontSize: userSettings.subtitlesFontSize,
-//                                color:colorFromDouble(userSettings.primaryColor)),
+                                color:Colors.black,
                               )),
                         ),
 
@@ -488,6 +488,7 @@ class _GradesPageState extends State<GradesPage>
                     refresh();
                   }),
               SpeedDialChild(
+                backgroundColor: colorFromDouble(userSettings.primaryColor),
                   child: !_loading ? langHandler.getCurrentFlag() : null,
                   label: !_loading
                       ? langHandler.getTranslationFor('language')
@@ -510,6 +511,7 @@ class _GradesPageState extends State<GradesPage>
             ],
           )
         : FloatingActionButton(
+            backgroundColor: colorFromDouble(userSettings.primaryColor),
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),

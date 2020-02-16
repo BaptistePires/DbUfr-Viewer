@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     if (_firstOpening) checkIfLogged();
     return _loading
-        ? getLoadingScreen(_animationcontroller)
+        ? getLoadingScreen(_animationcontroller, userSettings)
         : Scaffold(
             floatingActionButton: FloatingActionButton(
               child: langHandler.getCurrentFlag(),

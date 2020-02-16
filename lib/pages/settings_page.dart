@@ -83,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage>
             ),
             bottomNavigationBar: _setUpBottomAppBar(),
           )
-        : getLoadingScreen(_animationController);
+        : getLoadingScreen(_animationController, userSettings);
   }
 
   List<Widget> _setUpLinearGradientParameters() {

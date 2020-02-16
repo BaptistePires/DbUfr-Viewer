@@ -410,11 +410,17 @@ SnackBar setUpSnackBar(String text, UserSettings us) {
   );
 }
 
-Container getLoadingScreen(AnimationController parent) {
+Container getLoadingScreen(AnimationController parent, UserSettings us) {
   return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: BoxDecoration(gradient: getLinearGradientBg()),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: getGradientFromTmpColors(us.linearBgColors),
+              begin: Alignment.topCenter,
+            end: Alignment.bottomCenter
+          )
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
