@@ -34,11 +34,10 @@ class MyApp extends StatelessWidget {
 //highlightColor: colorFromDouble(userSettings.primaryColor),
 //primaryColor: colorFromDouble(userSettings.primaryColor),
 //toggleableActiveColor: colorFromDouble(userSettings.primaryColor),
-textSelectionColor: colorFromDouble(userSettings.primaryColor),
-textSelectionHandleColor: colorFromDouble(userSettings.primaryColor),
+          textSelectionColor: colorFromDouble(userSettings.primaryColor),
+          textSelectionHandleColor: colorFromDouble(userSettings.primaryColor),
 //        primarySwatch: colorFromDouble(userSettings.primaryColor),
-        fontFamily: userSettings.fontName
-          ),
+          fontFamily: userSettings.fontName),
       initialRoute: '/',
       routes: {
         '/': (context) => Scaffold(body: HomePage(userSettings)),

@@ -83,7 +83,8 @@ class _SettingsPageState extends State<SettingsPage>
             ),
             bottomNavigationBar: _setUpBottomAppBar(),
           )
-        : getLoadingScreen(_animationController, userSettings??=UserSettings());
+        : getLoadingScreen(
+            _animationController, userSettings ??= UserSettings());
   }
 
   List<Widget> _setUpLinearGradientParameters() {
@@ -117,7 +118,8 @@ class _SettingsPageState extends State<SettingsPage>
           setState(() {
             if (tmpLinear.length >= 10) {
               Scaffold.of(context).showSnackBar(setUpSnackBar(
-                  langHandler.getTranslationFor('settings_no_more_colors'), userSettings));
+                  langHandler.getTranslationFor('settings_no_more_colors'),
+                  userSettings));
             } else {
               tmpLinear.add(tmpLinear[tmpLinear.length - 1]);
             }
@@ -184,7 +186,8 @@ class _SettingsPageState extends State<SettingsPage>
                   } else {
                     Scaffold.of(context).showSnackBar(setUpSnackBar(
                         langHandler
-                            .getTranslationFor('settings_min_two_colors'), userSettings));
+                            .getTranslationFor('settings_min_two_colors'),
+                        userSettings));
                   }
                 },
                 child: Icon(

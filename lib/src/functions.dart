@@ -390,7 +390,10 @@ SnackBar setUpSnackBar(String text, UserSettings us) {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Icon(Icons.error, color: colorFromDouble(us.primaryColor),),
+          Icon(
+            Icons.error,
+            color: colorFromDouble(us.primaryColor),
+          ),
           SizedBox(
             width: 15,
           ),
@@ -399,9 +402,7 @@ SnackBar setUpSnackBar(String text, UserSettings us) {
               text,
               overflow: TextOverflow.clip,
               style: TextStyle(
-                fontSize: us.subtitlesFontSize,
-                fontFamily: us.fontName
-              ),
+                  fontSize: us.subtitlesFontSize, fontFamily: us.fontName),
             ),
           )
         ],
@@ -418,9 +419,7 @@ Container getLoadingScreen(AnimationController parent, UserSettings us) {
           gradient: LinearGradient(
               colors: getGradientFromTmpColors(us.linearBgColors),
               begin: Alignment.topCenter,
-            end: Alignment.bottomCenter
-          )
-      ),
+              end: Alignment.bottomCenter)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

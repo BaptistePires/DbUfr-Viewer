@@ -5,7 +5,6 @@ import 'package:dbufr_checker/src/models/UserSettings.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-
   UserSettings us;
 
   HomePage(this.us);
@@ -19,7 +18,6 @@ class _HomePageState extends State<HomePage>
   LangHandlerSingleton langHandler;
   AnimationController _controller;
   UserSettings userSettings = UserSettings();
-
 
   _HomePageState(this.userSettings);
   @override
@@ -39,8 +37,8 @@ class _HomePageState extends State<HomePage>
           Navigator.pushNamedAndRemoveUntil(
               context, '/login', (Route<dynamic> route) => false);
         } else {
-          UserArgsBundle args = new UserArgsBundle(
-              credentials[STUDENT_NO_KEY], credentials[PASSWORD_KEY], userSettings);
+          UserArgsBundle args = new UserArgsBundle(credentials[STUDENT_NO_KEY],
+              credentials[PASSWORD_KEY], userSettings);
           Navigator.pushNamedAndRemoveUntil(
               context, '/grades', (Route<dynamic> route) => false,
               arguments: args);

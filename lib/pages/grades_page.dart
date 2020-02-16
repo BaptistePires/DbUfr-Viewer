@@ -323,7 +323,7 @@ class _GradesPageState extends State<GradesPage>
                               style: TextStyle(
                                 fontFamily: userSettings.fontName,
                                 fontSize: userSettings.subtitlesFontSize,
-                                color:Colors.black,
+                                color: Colors.black,
                               )),
                         ),
 
@@ -488,7 +488,7 @@ class _GradesPageState extends State<GradesPage>
                     refresh();
                   }),
               SpeedDialChild(
-                backgroundColor: colorFromDouble(userSettings.primaryColor),
+                  backgroundColor: colorFromDouble(userSettings.primaryColor),
                   child: !_loading ? langHandler.getCurrentFlag() : null,
                   label: !_loading
                       ? langHandler.getTranslationFor('language')
@@ -572,7 +572,8 @@ class _GradesPageState extends State<GradesPage>
           _refreshing = false;
           if (ues.length > 0) {
             Scaffold.of(context).showSnackBar(setUpSnackBar(
-                langHandler.getTranslationFor('grades_update_error'), userSettings));
+                langHandler.getTranslationFor('grades_update_error'),
+                userSettings));
           }
         });
       }
@@ -589,6 +590,7 @@ class _GradesPageState extends State<GradesPage>
 
   void _showSnackBarSuccessRefresh() {
     Scaffold.of(context).showSnackBar(setUpSnackBar(
-        langHandler.getTranslationFor('grades_data_update_success'), userSettings));
+        langHandler.getTranslationFor('grades_data_update_success'),
+        userSettings));
   }
 }

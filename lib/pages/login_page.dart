@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     if (_firstOpening) checkIfLogged();
     return _loading
-        ? Scaffold(body:getLoadingScreen(_animationcontroller, userSettings))
+        ? Scaffold(body: getLoadingScreen(_animationcontroller, userSettings))
         : Scaffold(
             floatingActionButton: FloatingActionButton(
               child: langHandler.getCurrentFlag(),
@@ -190,7 +190,8 @@ class _LoginPageState extends State<LoginPage>
       });
       if (_credentialsError) {
         Scaffold.of(context).showSnackBar(setUpSnackBar(
-            langHandler.getTranslationFor('login_credentials_error'), userSettings));
+            langHandler.getTranslationFor('login_credentials_error'),
+            userSettings));
       }
       if (_credentialsError || _connectError) {
         return;
@@ -212,8 +213,8 @@ class _LoginPageState extends State<LoginPage>
         resetFlags();
         _connectError = true;
       });
-      Scaffold.of(context)
-          .showSnackBar(setUpSnackBar('Impossible de joindre DbUfr.', userSettings));
+      Scaffold.of(context).showSnackBar(
+          setUpSnackBar('Impossible de joindre DbUfr.', userSettings));
     }
   }
 
@@ -330,18 +331,17 @@ class _LoginPageState extends State<LoginPage>
               color: colorFromDouble(
                 userSettings.primaryColor,
               ),
-
             )),
         hintText: langHandler.getTranslationFor('login_student_no'),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         labelText: langHandler.getTranslationFor('login_student_no'),
         labelStyle: TextStyle(
-          color:colorFromDouble(userSettings.primaryColor),
-          fontFamily: userSettings.fontName
-        ),
+            color: colorFromDouble(userSettings.primaryColor),
+            fontFamily: userSettings.fontName),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.0),
-          borderSide: BorderSide(color: colorFromDouble(userSettings.primaryColor)),
+          borderSide:
+              BorderSide(color: colorFromDouble(userSettings.primaryColor)),
         ),
       ),
       cursorColor: colorFromDouble(userSettings.primaryColor),
@@ -373,9 +373,8 @@ class _LoginPageState extends State<LoginPage>
         hintText: langHandler.getTranslationFor('login_password'),
         labelText: langHandler.getTranslationFor('login_password'),
         labelStyle: TextStyle(
-          color: colorFromDouble(userSettings.primaryColor),
-          fontFamily: userSettings.fontName
-        ),
+            color: colorFromDouble(userSettings.primaryColor),
+            fontFamily: userSettings.fontName),
         contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         focusColor: colorFromDouble(userSettings.primaryColor),
         border: OutlineInputBorder(
@@ -444,8 +443,7 @@ class _LoginPageState extends State<LoginPage>
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: new AlwaysStoppedAnimation<Color>(
-                          colorFromDouble(userSettings.primaryColor)
-                        ),
+                            colorFromDouble(userSettings.primaryColor)),
                       ),
                       widthFactor: 1,
                     ),
