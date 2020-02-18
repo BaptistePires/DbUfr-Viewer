@@ -473,7 +473,6 @@ class _SettingsPageState extends State<SettingsPage>
             _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
           });
         } else if (i == 1) {
-          if (!isThereChanges()) return;
           setState(() {
             tmpLinear = List.from(userSettings.linearBgColors);
             tmpPrimaryColor = userSettings.primaryColor;
@@ -482,6 +481,7 @@ class _SettingsPageState extends State<SettingsPage>
             _tmpSubtitleFontSize = userSettings.subtitlesFontSize;
           });
         } else if (i == 2) {
+          if (!isThereChanges()) return;
           setState(() {
             userSettings.linearBgColors = tmpLinear;
             userSettings.primaryColor = tmpPrimaryColor;
