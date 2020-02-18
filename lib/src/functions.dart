@@ -5,6 +5,7 @@ import 'package:dbufr_checker/src/models/UserSettings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:html/dom.dart' show Document;
 import 'package:path_provider/path_provider.dart';
@@ -34,53 +35,52 @@ Future<void> clearUserData() async {
 
 // Shared preferences functions
 Future<bool> isLogged() async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  if (sp.getString(STUDENT_NO_KEY) == null ||
-      sp.getString(PASSWORD_KEY) == null)
+  final storage = new FlutterSecureStorage();
+  if (await storage.read(key:STUDENT_NO_KEY) == null ||
+      await storage.read(key:PASSWORD_KEY) == null)
     return false;
   else
     return true;
 }
 
 Future<void> saveCredentials(String studentNo, String password) async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  sp.setString(STUDENT_NO_KEY, studentNo);
-  sp.setString(PASSWORD_KEY, password);
+  final storage = FlutterSecureStorage();
+  await storage.write(key:STUDENT_NO_KEY, value:studentNo);
+  await storage.write(key: PASSWORD_KEY, value: password);
 }
 
 Future<Map<String, String>> getCredentials() async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
+final storage = new FlutterSecureStorage();
   return {
-    STUDENT_NO_KEY: sp.getString(STUDENT_NO_KEY),
-    PASSWORD_KEY: sp.getString(PASSWORD_KEY)
+    STUDENT_NO_KEY: await storage.read(key: STUDENT_NO_KEY),
+    PASSWORD_KEY: await storage.read(key: PASSWORD_KEY)
   };
 }
 
 Future<void> clearSharedPreferences() async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  sp.clear();
+final storage = new FlutterSecureStorage();
+await storage.deleteAll();
 }
 
 Future<String> getSavedLangPref() async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  return sp.getString(LANG_KEY);
+final storage = new FlutterSecureStorage();
+  return await storage.read(key: LANG_KEY);
 }
 
 Future<void> saveLangPref(String lang) async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  sp.setString(LANG_KEY, lang);
+final storage = new FlutterSecureStorage();
+  await storage.write(key: LANG_KEY, value: lang);
 }
 
 Future<bool> isItFirstLaunch() async {
-  SharedPreferences sp = await SharedPreferences.getInstance();
-  bool firstLaunch = sp.getBool(FIRST_LAUNCH_KEY);
+final storage = new FlutterSecureStorage();
+  bool firstLaunch = (await  storage.read(key: FIRST_LAUNCH_KEY)) == null;
   if(firstLaunch == null){
-    sp.setBool(FIRST_LAUNCH_KEY, false);
+    await storage.write(key: FIRST_LAUNCH_KEY, value: 'false');
     return true;
   }
   return firstLaunch;
 }
-
 
 // Http functions
 Future<http.Response> queryToDbUfr(String studentNo, String password) async {
