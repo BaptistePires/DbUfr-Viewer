@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:dbufr_checker/src/CrendentialsArgument.dart';
 import 'package:dbufr_checker/src/LangHandlerSingleton.dart';
 import 'package:dbufr_checker/src/models/UserSettings.dart';
+import 'package:dbufr_checker/src/widgets/AlertDialogInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -28,6 +29,7 @@ class _LoginPageState extends State<LoginPage>
   bool _connected = false;
   bool _firstOpening = true;
   bool _loading = true;
+  bool _isFirstLaunch;
 
   // Fields controllers
   final studentNoController = TextEditingController();
@@ -57,6 +59,14 @@ class _LoginPageState extends State<LoginPage>
         setState(() {
           userSettings = value;
         });
+      }
+    });
+
+    isItFirstLaunch().then((value) {
+      print(value);
+      if(value){
+        Future.delayed(Duration.zero, () => showDialog(context: context, builder: (ctx) => AlertInfoDialog(userSettings, langHandler)));
+
       }
     });
   }
@@ -96,43 +106,48 @@ class _LoginPageState extends State<LoginPage>
                       colors: getGradientFromTmpColors(
                           userSettings.linearBgColors))),
               child: Center(
-                child: ListView(
-                  shrinkWrap: true,
+                child: Padding(
                   padding: EdgeInsets.only(left: 24, right: 24),
-                  children: <Widget>[
-                    _setUpLogo(),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: Colors.black, width: 1),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.lightBlue[900], blurRadius: 10)
-                        ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+//                  shrinkWrap: true,
+//                  padding: EdgeInsets.only(left: 24, right: 24),
+                    children: <Widget>[
+                      _setUpLogo(),
+                      SizedBox(
+                        height: 30,
                       ),
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            langHandler.getTranslationFor('login_connection'),
-                            style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          _setUpForm(),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.black, width: 1),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.lightBlue[900], blurRadius: 10)
+                          ],
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            Text(
+                              langHandler.getTranslationFor('login_connection'),
+                              style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            _setUpForm(),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )
               ),
             ));
   }

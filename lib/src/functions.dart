@@ -19,6 +19,7 @@ const String STUDENT_NO_KEY = 'student_no';
 const String PASSWORD_KEY = 'password';
 const String LANG_KEY = 'lang';
 const String USER_SETTINGS_KEY = 'user_settings';
+const String FIRST_LAUNCH_KEY = 'first_launch';
 
 const String DB_UFR_URL =
     'https://www-dbufr.ufr-info-p6.jussieu.fr/lmd/2004/master/auths/seeStudentMarks.php';
@@ -69,6 +70,17 @@ Future<void> saveLangPref(String lang) async {
   SharedPreferences sp = await SharedPreferences.getInstance();
   sp.setString(LANG_KEY, lang);
 }
+
+Future<bool> isItFirstLaunch() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  bool firstLaunch = sp.getBool(FIRST_LAUNCH_KEY);
+  if(firstLaunch == null){
+    sp.setBool(FIRST_LAUNCH_KEY, false);
+    return true;
+  }
+  return firstLaunch;
+}
+
 
 // Http functions
 Future<http.Response> queryToDbUfr(String studentNo, String password) async {

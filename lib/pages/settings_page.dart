@@ -434,7 +434,11 @@ class _SettingsPageState extends State<SettingsPage>
         });
       },
     ));
-
+    txtParams.add(Text(
+      langHandler.getTranslationFor('settings_font'),
+      style:
+      TextStyle(fontSize: _tmpTitleFontSize , fontFamily: _tmpFontName),
+    ));
     txtParams.add(DropdownButton(
         value: _tmpFontName,
         onChanged: (String v) {

@@ -12,6 +12,9 @@
   "reset": "Réinitialiser",
   "text": "Texte",
   "quit": "Quitter",
+  "information": "Informations",
+  "credits": "Crédits",
+  "developer": "Développeur",
 
   "login_connection": "Connexion",
   "login_student_no": "N° étudiant",
@@ -39,5 +42,7 @@
   "settings_subtitle_font_size": "Subtitle font size",
   "settings_reset_origin": "Réini. origine",
   "settings_quit_without_saving": "Vous n'avez pas sauvegardé les modifications, êtes-vous sûr d'annuler les modifications ?",
-  "settings_settings_saved": "Paramètres mis à jours"
+  "settings_settings_saved": "Paramètres mis à jours",
+  "settings_font": "Police d'écriture",
+  "information_text_info": "Cette application est n'est pas une application officielle, je l'ai créé dans le but de faciliter la lecture des notes des étudiants de l'UFR d'informatique. \n\nLes données sont stockées sur le téléphone, ne sont communiqués à aucun tiers."
 }

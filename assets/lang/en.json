@@ -12,6 +12,9 @@
   "reset": "Reset",
   "text": "Text",
   "quit": "Quit",
+  "information": "Information",
+  "credits": "Credits",
+  "developer": "developer",
 
   "login_connection": "Login",
   "login_student_no": "Student N°",
@@ -39,5 +42,8 @@
   "settings_subtitle_font_size": "Taille de la police des sous-titres",
   "settings_reset_origin": "Reset origin",
   "settings_quit_without_saving": "You have not saved changes, are you sure you want to quit ?",
-  "settings_settings_saved": "Settings updated"
+  "settings_settings_saved": "Settings updated",
+  "settings_font": "Font",
+
+  "information_text_info": "App desc here"
 }
